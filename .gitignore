@@ -17,3 +17,6 @@ node_modules/
 *.genie
 .DS_Store
 Thumbs.db
+
+# 本地发布脚本
+发布到GitHub.bat
