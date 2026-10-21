@@ -1,0 +1,31 @@
+const { chromium } = require('playwright');
+const path = require('path');
+const fs = require('fs');
+const LIVE = 'https://xuanxue-stock.app.workbuddy.host/?sharecode=OYYVCCG5LE';
+(async () => {
+  const b = await chromium.launch({ executablePath: 'C://Program Files\\Google\\Chrome\\Application\\chrome.exe' });
+  const ctx = await b.newContext({ viewport: { width: 1280, height: 950 }, ignoreHTTPSErrors: true, acceptDownloads: true });
+  const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto(LIVE, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await p.waitForTimeout(1800);
+  console.log('链接:', await p.locator('#lnkScan').getAttribute('href'));
+  await p.click('#lnkScan');
+  await p.waitForSelector('#batchResult table', { timeout: 90000 });
+  await p.waitForTimeout(500);
+  console.log('扫描行数:', await p.locator('#batchResult tbody tr').count(), '| 天时:', await p.locator('#marketCard .gua-name').innerText());
+  const dl = p.waitForEvent('download');
+  await p.click('#btnReport');
+  const d = await dl; const out = path.resolve('live_report.html'); await d.saveAs(out);
+  console.log('报告:', d.suggestedFilename(), (fs.statSync(out).size / 1024).toFixed(0) + 'KB');
+  const p2 = await ctx.newPage();
+  await p2.goto('file:///' + out.replace(/\\/g, '/')); await p2.waitForTimeout(300);
+  console.log('报告标题:', await p2.title(), '| 统计:', (await p2.locator('.stats').innerText()).replace(/\n/g, ' '));
+  // 历史报告页
+  const p3 = await ctx.newPage();
+  await p3.goto(LIVE.replace('?sharecode=OYYVCCG5LE', '/report.html?sharecode=OYYVCCG5LE'), { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await p3.waitForTimeout(600);
+  console.log('历史报告标题:', await p3.title());
+  console.log('JS 错误:', errs.length ? errs : 'none');
+  await b.close();
+})();

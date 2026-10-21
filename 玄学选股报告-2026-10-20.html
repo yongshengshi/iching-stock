@@ -1,0 +1,628 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>全市场玄学选股 · 2026-10-20</title>
+<style>
+:root{--paper:#f7f2e7;--panel:#fffdf7;--panel2:#fbf6ea;--ink:#241f1a;--ink2:#5f5749;--ink3:#8b8172;--line:#e3d8c2;--red:#b3341f;--green:#1a7a5c;--gold:#a9812f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:radial-gradient(1100px 500px at 8% -8%,#fffdf6,rgba(255,253,246,0) 60%),var(--paper);padding:30px 20px 70px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-family:"Songti SC","SimSun",serif;font-size:27px;letter-spacing:5px;font-weight:600}
+.sub{font-size:12px;color:var(--ink3);letter-spacing:2px;margin-top:8px}
+.hd{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.meta{font-size:12px;color:var(--ink2);line-height:1.9;text-align:right}
+.meta b{color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px}
+.st{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+.st span{font-size:11px;color:var(--ink3);letter-spacing:1px}
+.st b{display:block;font-family:"Songti SC",serif;font-size:22px;margin-top:4px}
+.st b i{font-size:11px;font-style:normal;color:var(--ink3);margin-left:3px}
+h2{font-family:"Songti SC",serif;font-size:18px;letter-spacing:3px;margin:26px 0 12px;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:4px;height:17px;background:var(--red);border-radius:2px}
+.note{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:13px 16px;font-size:13px;line-height:1.95;color:#7a3125}
+.pick{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 10px 30px -20px rgba(90,70,40,.5)}
+.pick-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px dashed var(--line);padding-bottom:12px;margin-bottom:13px}
+.tag{background:var(--red);color:#fff;font-size:11px;padding:3px 9px;border-radius:5px;letter-spacing:1px}
+.tag.alt{background:var(--gold)}
+.nm{font-family:"Songti SC",serif;font-size:20px;font-weight:600;letter-spacing:1px}
+.cd{font-size:12px;color:var(--ink3)}
+.px{font-family:"Songti SC",serif;font-size:16px;font-weight:600}
+.sc{margin-left:auto;font-family:"Songti SC",serif;font-size:30px;color:var(--red);font-weight:600}
+.sc small{font-size:11px;color:var(--ink3);margin-left:2px}
+.pick-b{display:grid;grid-template-columns:1.25fr 1fr;gap:20px}
+@media(max-width:820px){.pick-b{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+.lbl{font-size:11px;color:var(--red);letter-spacing:1.5px;margin-bottom:4px}
+.q{font-family:"Songti SC",serif;font-size:16px;line-height:1.8}
+.q2{font-size:13px;line-height:1.85;color:var(--ink2)}
+.q2 b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;align-content:start}
+.cell{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.cell span{font-size:10.5px;color:var(--ink3);display:block}
+.cell b{font-family:"Songti SC",serif;font-size:18px;display:block;margin-top:2px}
+.cell i{font-size:10px;font-style:normal;color:var(--ink3);display:block;margin-top:2px}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
+th{background:var(--panel2);font-weight:500;font-size:11px;color:var(--ink3);letter-spacing:.5px;padding:9px 8px;text-align:left;white-space:nowrap}
+td{padding:8px;border-top:1px solid #f0e9da;white-space:nowrap}
+td.c,th.c{text-align:center}
+.mono{font-variant-numeric:tabular-nums;font-family:"SFMono-Regular",Consolas,monospace;font-size:12px}
+.muted{color:var(--ink3)}
+.up{color:var(--red)} .down{color:var(--green)}
+.rk{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;font-size:10.5px;color:#fff;background:#c9bda4;font-family:sans-serif}
+.rk.hot{background:var(--red)}
+.foot{margin-top:24px;font-size:11.5px;color:var(--ink3);line-height:2;text-align:center}
+</style></head><body><div class="wrap">
+<div class="hd">
+  <div><h1>全市场玄学选股</h1><div class="sub">周易 · 梅花易数 · 五行体用 · 沪深主板全量扫描</div></div>
+  <div class="meta">
+    扫描日 <b>2026-10-20（收盘）</b><br>
+    今日四柱 丙午年 戊戌月 丁卯日 戊申时<br>
+    明日四柱 丙午年 戊戌月 戊辰日 丁巳时<br>
+    天时：今日 火雷噬嗑上九爻动 42分 ／ 明日 雷泽归妹九四爻动 46分
+  </div>
+</div>
+
+<div class="stats">
+  <div class="st"><span>抓取有效行情</span><b>3125<i>只</i></b></div>
+  <div class="st"><span>流动性入围</span><b>2030<i>只</i></b></div>
+  <div class="st"><span>双时空≥58分</span><b>512<i>只</i></b></div>
+  <div class="st"><span>去重后卦断</span><b>48<i>种</i></b></div>
+  <div class="st"><span>明日天时</span><b style="color:var(--green)">46<i>分 · 偏弱</i></b></div>
+</div>
+
+<div class="note"><b>天时先看：</b>今日收盘卦【火雷噬嗑】上九爻动，仅 42 分；明日巳时卦【雷泽归妹】九四爻动 —— <b>「归妹愆期，迟归有时」</b>：期未至，宜等不宜追。故本表所有标的<b>只列卦气、不给重仓</b>，单只建议不超过 2 成，总仓不超过 3 成。</div>
+
+<h2>主选 · 备选</h2>
+<div class="pick">
+  <div class="pick-h">
+    <span class="tag">主选</span>
+    <span class="nm">久远银海</span>
+    <span class="cd mono">002777</span>
+    <span class="px mono up">13.68　+1.94%</span>
+    <span class="sc mono">80<small>分 · 今81／明79</small></span>
+  </div>
+  <div class="pick-b">
+    <div>
+      <div class="lbl">本卦 · 乾为天　九五爻动 → 变 火天大有</div>
+      <div class="q">「飞龙在天，利见大人。」</div>
+      <div class="lbl" style="margin-top:10px">体用</div>
+      <div class="q2">体乾（金）· 用乾（金）→ <b>体用比和</b>，不喜不惊，按部就班；体卦旺于戌月。</div>
+      <div class="lbl" style="margin-top:10px">变卦</div>
+      <div class="q2">火天大有：「元亨。」</div>
+    </div>
+    <div class="grid">
+      <div class="cell"><span>入场挂单</span><b class="up">13.57</b><i>次档 13.40</i></div>
+      <div class="cell"><span>止损</span><b class="down">13.24</b><i>收盘破则走</i></div>
+      <div class="cell"><span>目标一</span><b style="color:#a9812f">14.26</b><i>目标二 14.70</i></div>
+      <div class="cell"><span>应期</span><b>7日</b><i>2026-10-29</i></div>
+      <div class="cell"><span>吉时</span><b style="font-size:15px">未时</b><i>13:00–15:00</i></div>
+      <div class="cell"><span>建议仓位</span><b style="font-size:15px">≤ 2 成</b><i>卦位 6–7 成，天时弱故折减</i></div>
+    </div>
+  </div>
+</div>
+<div class="pick">
+  <div class="pick-h">
+    <span class="tag">备选</span>
+    <span class="nm">新兴铸管</span>
+    <span class="cd mono">000778</span>
+    <span class="px mono down">3.58　-1.38%</span>
+    <span class="sc mono">82<small>分 · 今69／明95</small></span>
+  </div>
+  <div class="pick-b">
+    <div>
+      <div class="lbl">本卦 · 兑为泽　九四爻动 → 变 水泽节</div>
+      <div class="q">「商兑未宁，介疾有喜。」</div>
+      <div class="lbl" style="margin-top:10px">体用</div>
+      <div class="q2">体兑（金）· 用兑（金）→ <b>体用比和</b>，不喜不惊，按部就班；体卦旺于戌月。</div>
+      <div class="lbl" style="margin-top:10px">变卦</div>
+      <div class="q2">水泽节：「亨，苦节，不可贞。」</div>
+    </div>
+    <div class="grid">
+      <div class="cell"><span>入场挂单</span><b class="up">3.55</b><i>次档 3.50</i></div>
+      <div class="cell"><span>止损</span><b class="down">3.45</b><i>收盘破则走</i></div>
+      <div class="cell"><span>目标一</span><b style="color:#a9812f">3.72</b><i>目标二 3.82</i></div>
+      <div class="cell"><span>应期</span><b>8日</b><i>2026-10-30</i></div>
+      <div class="cell"><span>吉时</span><b style="font-size:15px">未时</b><i>13:00–15:00</i></div>
+      <div class="cell"><span>建议仓位</span><b style="font-size:15px">≤ 2 成</b><i>卦位 4–5 成，天时弱故折减</i></div>
+    </div>
+  </div>
+</div>
+
+<h2>双时空印证 · 前 30 种卦断</h2>
+<table><thead><tr>
+<th class="c">#</th><th>名称</th><th class="c">代码</th><th class="c">收盘</th><th class="c">涨跌</th>
+<th class="c">本卦</th><th class="c">动爻</th><th class="c">体卦</th><th class="c">体用</th><th class="c">综合</th><th class="c">今/明</th>
+<th class="c">买入</th><th class="c">止损</th><th class="c">目标</th><th class="c">成交额亿</th>
+</tr></thead><tbody><tr>
+  <td class="c"><span class="rk hot">1</span></td>
+  <td><b>胜利精密</b></td>
+  <td class="c mono muted">002426</td>
+  <td class="c mono">2.33</td>
+  <td class="c mono up">+1.3%</td>
+  <td class="c">泽地萃</td>
+  <td class="c muted">六二</td>
+  <td class="c">兑金</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>89</b></td>
+  <td class="c mono muted">97/82</td>
+  <td class="c mono up">2.31</td>
+  <td class="c mono down">2.25</td>
+  <td class="c mono" style="color:#a9812f">2.44</td>
+  <td class="c mono muted">1.1</td>
+</tr><tr>
+  <td class="c"><span class="rk hot">2</span></td>
+  <td><b>新兴铸管</b></td>
+  <td class="c mono muted">000778</td>
+  <td class="c mono">3.58</td>
+  <td class="c mono down">-1.38%</td>
+  <td class="c">兑为泽</td>
+  <td class="c muted">九四</td>
+  <td class="c">兑金</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>82</b></td>
+  <td class="c mono muted">69/95</td>
+  <td class="c mono up">3.55</td>
+  <td class="c mono down">3.45</td>
+  <td class="c mono" style="color:#a9812f">3.72</td>
+  <td class="c mono muted">1.0</td>
+</tr><tr>
+  <td class="c"><span class="rk hot">3</span></td>
+  <td><b>久远银海</b></td>
+  <td class="c mono muted">002777</td>
+  <td class="c mono">13.68</td>
+  <td class="c mono up">+1.94%</td>
+  <td class="c">乾为天</td>
+  <td class="c muted">九五</td>
+  <td class="c">乾金</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>80</b></td>
+  <td class="c mono muted">81/79</td>
+  <td class="c mono up">13.57</td>
+  <td class="c mono down">13.24</td>
+  <td class="c mono" style="color:#a9812f">14.26</td>
+  <td class="c mono muted">4.4</td>
+</tr><tr>
+  <td class="c"><span class="rk ">4</span></td>
+  <td><b>郑州煤电</b></td>
+  <td class="c mono muted">600121</td>
+  <td class="c mono">4.59</td>
+  <td class="c mono down">-5.94%</td>
+  <td class="c">天地否</td>
+  <td class="c muted">初六</td>
+  <td class="c">乾金</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>79</b></td>
+  <td class="c mono muted">76/81</td>
+  <td class="c mono up">4.54</td>
+  <td class="c mono down">4.40</td>
+  <td class="c mono" style="color:#a9812f">4.86</td>
+  <td class="c mono muted">6.3</td>
+</tr><tr>
+  <td class="c"><span class="rk ">5</span></td>
+  <td><b>河钢股份</b></td>
+  <td class="c mono muted">000709</td>
+  <td class="c mono">2.01</td>
+  <td class="c mono down">-1.47%</td>
+  <td class="c">风雷益</td>
+  <td class="c muted">初九</td>
+  <td class="c">巽木</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>78</b></td>
+  <td class="c mono muted">75/82</td>
+  <td class="c mono up">1.99</td>
+  <td class="c mono down">1.94</td>
+  <td class="c mono" style="color:#a9812f">2.09</td>
+  <td class="c mono muted">1.1</td>
+</tr><tr>
+  <td class="c"><span class="rk ">6</span></td>
+  <td><b>广安爱众</b></td>
+  <td class="c mono muted">600979</td>
+  <td class="c mono">3.72</td>
+  <td class="c mono down">-1.59%</td>
+  <td class="c">火风鼎</td>
+  <td class="c muted">初六</td>
+  <td class="c">离火</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>77</b></td>
+  <td class="c mono muted">84/69</td>
+  <td class="c mono up">3.68</td>
+  <td class="c mono down">3.58</td>
+  <td class="c mono" style="color:#a9812f">3.88</td>
+  <td class="c mono muted">0.6</td>
+</tr><tr>
+  <td class="c"><span class="rk ">7</span></td>
+  <td><b>华电国际</b></td>
+  <td class="c mono muted">600027</td>
+  <td class="c mono">5.18</td>
+  <td class="c mono down">-0.58%</td>
+  <td class="c">火风鼎</td>
+  <td class="c muted">九三</td>
+  <td class="c">离火</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>74</b></td>
+  <td class="c mono muted">82/66</td>
+  <td class="c mono up">5.14</td>
+  <td class="c mono down">5.01</td>
+  <td class="c mono" style="color:#a9812f">5.40</td>
+  <td class="c mono muted">3.4</td>
+</tr><tr>
+  <td class="c"><span class="rk ">8</span></td>
+  <td><b>上海建工</b></td>
+  <td class="c mono muted">600170</td>
+  <td class="c mono">2.17</td>
+  <td class="c mono down">-0.46%</td>
+  <td class="c">泽雷随</td>
+  <td class="c muted">六二</td>
+  <td class="c">兑金</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>74</b></td>
+  <td class="c mono muted">80/67</td>
+  <td class="c mono up">2.15</td>
+  <td class="c mono down">2.08</td>
+  <td class="c mono" style="color:#a9812f">2.26</td>
+  <td class="c mono muted">1.7</td>
+</tr><tr>
+  <td class="c"><span class="rk ">9</span></td>
+  <td><b>新潮能源</b></td>
+  <td class="c mono muted">600777</td>
+  <td class="c mono">4.49</td>
+  <td class="c mono up">+3.46%</td>
+  <td class="c">乾为天</td>
+  <td class="c muted">九三</td>
+  <td class="c">乾金</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>74</b></td>
+  <td class="c mono muted">78/69</td>
+  <td class="c mono up">4.45</td>
+  <td class="c mono down">4.34</td>
+  <td class="c mono" style="color:#a9812f">4.68</td>
+  <td class="c mono muted">1.7</td>
+</tr><tr>
+  <td class="c"><span class="rk ">10</span></td>
+  <td><b>悦心健康</b></td>
+  <td class="c mono muted">002162</td>
+  <td class="c mono">4.02</td>
+  <td class="c mono ">0%</td>
+  <td class="c">泽风大过</td>
+  <td class="c muted">九二</td>
+  <td class="c">兑金</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>73</b></td>
+  <td class="c mono muted">75/72</td>
+  <td class="c mono up">3.98</td>
+  <td class="c mono down">3.88</td>
+  <td class="c mono" style="color:#a9812f">4.25</td>
+  <td class="c mono muted">0.5</td>
+</tr><tr>
+  <td class="c"><span class="rk ">11</span></td>
+  <td><b>华神科技</b></td>
+  <td class="c mono muted">000790</td>
+  <td class="c mono">3.92</td>
+  <td class="c mono up">+1.03%</td>
+  <td class="c">水雷屯</td>
+  <td class="c muted">六四</td>
+  <td class="c">震木</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>73</b></td>
+  <td class="c mono muted">79/66</td>
+  <td class="c mono up">3.88</td>
+  <td class="c mono down">3.76</td>
+  <td class="c mono" style="color:#a9812f">4.15</td>
+  <td class="c mono muted">0.6</td>
+</tr><tr>
+  <td class="c"><span class="rk ">12</span></td>
+  <td><b>北京文化</b></td>
+  <td class="c mono muted">000802</td>
+  <td class="c mono">3.83</td>
+  <td class="c mono up">+0.52%</td>
+  <td class="c">泽水困</td>
+  <td class="c muted">九四</td>
+  <td class="c">坎水</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>72</b></td>
+  <td class="c mono muted">66/78</td>
+  <td class="c mono up">3.79</td>
+  <td class="c mono down">3.69</td>
+  <td class="c mono" style="color:#a9812f">3.97</td>
+  <td class="c mono muted">1.6</td>
+</tr><tr>
+  <td class="c"><span class="rk ">13</span></td>
+  <td><b>润邦股份</b></td>
+  <td class="c mono muted">002483</td>
+  <td class="c mono">5.75</td>
+  <td class="c mono down">-1.03%</td>
+  <td class="c">离为火</td>
+  <td class="c muted">六五</td>
+  <td class="c">离火</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>72</b></td>
+  <td class="c mono muted">72/72</td>
+  <td class="c mono up">5.68</td>
+  <td class="c mono down">5.51</td>
+  <td class="c mono" style="color:#a9812f">5.98</td>
+  <td class="c mono muted">0.5</td>
+</tr><tr>
+  <td class="c"><span class="rk ">14</span></td>
+  <td><b>奋达科技</b></td>
+  <td class="c mono muted">002681</td>
+  <td class="c mono">4.28</td>
+  <td class="c mono up">+4.9%</td>
+  <td class="c">天火同人</td>
+  <td class="c muted">九五</td>
+  <td class="c">离火</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>71</b></td>
+  <td class="c mono muted">66/76</td>
+  <td class="c mono up">4.24</td>
+  <td class="c mono down">4.13</td>
+  <td class="c mono" style="color:#a9812f">4.51</td>
+  <td class="c mono muted">1.8</td>
+</tr><tr>
+  <td class="c"><span class="rk ">15</span></td>
+  <td><b>兰州银行</b></td>
+  <td class="c mono muted">001227</td>
+  <td class="c mono">2.10</td>
+  <td class="c mono down">-1.41%</td>
+  <td class="c">火山旅</td>
+  <td class="c muted">九三</td>
+  <td class="c">离火</td>
+  <td class="c ">体生用</td>
+  <td class="c mono"><b>71</b></td>
+  <td class="c mono muted">60/81</td>
+  <td class="c mono up">2.08</td>
+  <td class="c mono down">2.02</td>
+  <td class="c mono" style="color:#a9812f">2.17</td>
+  <td class="c mono muted">1.1</td>
+</tr><tr>
+  <td class="c"><span class="rk ">16</span></td>
+  <td><b>农发种业</b></td>
+  <td class="c mono muted">600313</td>
+  <td class="c mono">6.27</td>
+  <td class="c mono up">+1.79%</td>
+  <td class="c">天火同人</td>
+  <td class="c muted">初九</td>
+  <td class="c">乾金</td>
+  <td class="c down">用克体</td>
+  <td class="c mono"><b>71</b></td>
+  <td class="c mono muted">63/79</td>
+  <td class="c mono up">6.21</td>
+  <td class="c mono down">6.04</td>
+  <td class="c mono" style="color:#a9812f">6.59</td>
+  <td class="c mono muted">1.7</td>
+</tr><tr>
+  <td class="c"><span class="rk ">17</span></td>
+  <td><b>罗欣药业</b></td>
+  <td class="c mono muted">002793</td>
+  <td class="c mono">4.38</td>
+  <td class="c mono down">-1.13%</td>
+  <td class="c">天山遁</td>
+  <td class="c muted">九三</td>
+  <td class="c">乾金</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>70</b></td>
+  <td class="c mono muted">81/59</td>
+  <td class="c mono up">4.34</td>
+  <td class="c mono down">4.24</td>
+  <td class="c mono" style="color:#a9812f">4.57</td>
+  <td class="c mono muted">0.9</td>
+</tr><tr>
+  <td class="c"><span class="rk ">18</span></td>
+  <td><b>融发核电</b></td>
+  <td class="c mono muted">002366</td>
+  <td class="c mono">5.46</td>
+  <td class="c mono up">+0.18%</td>
+  <td class="c">水火既济</td>
+  <td class="c muted">六二</td>
+  <td class="c">坎水</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>70</b></td>
+  <td class="c mono muted">67/73</td>
+  <td class="c mono up">5.39</td>
+  <td class="c mono down">5.22</td>
+  <td class="c mono" style="color:#a9812f">5.75</td>
+  <td class="c mono muted">1.0</td>
+</tr><tr>
+  <td class="c"><span class="rk ">19</span></td>
+  <td><b>远望谷</b></td>
+  <td class="c mono muted">002161</td>
+  <td class="c mono">5.71</td>
+  <td class="c mono up">+0.53%</td>
+  <td class="c">天雷无妄</td>
+  <td class="c muted">初九</td>
+  <td class="c">乾金</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>70</b></td>
+  <td class="c mono muted">80/60</td>
+  <td class="c mono up">5.66</td>
+  <td class="c mono down">5.52</td>
+  <td class="c mono" style="color:#a9812f">5.95</td>
+  <td class="c mono muted">0.9</td>
+</tr><tr>
+  <td class="c"><span class="rk ">20</span></td>
+  <td><b>华茂股份</b></td>
+  <td class="c mono muted">000850</td>
+  <td class="c mono">3.86</td>
+  <td class="c mono down">-1.28%</td>
+  <td class="c">泽天夬</td>
+  <td class="c muted">九四</td>
+  <td class="c">乾金</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>70</b></td>
+  <td class="c mono muted">58/81</td>
+  <td class="c mono up">3.82</td>
+  <td class="c mono down">3.71</td>
+  <td class="c mono" style="color:#a9812f">4.05</td>
+  <td class="c mono muted">0.7</td>
+</tr><tr>
+  <td class="c"><span class="rk ">21</span></td>
+  <td><b>双星新材</b></td>
+  <td class="c mono muted">002585</td>
+  <td class="c mono">10.32</td>
+  <td class="c mono down">-1.53%</td>
+  <td class="c">天水讼</td>
+  <td class="c muted">九五</td>
+  <td class="c">坎水</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>70</b></td>
+  <td class="c mono muted">69/70</td>
+  <td class="c mono up">10.22</td>
+  <td class="c mono down">9.96</td>
+  <td class="c mono" style="color:#a9812f">10.88</td>
+  <td class="c mono muted">9.0</td>
+</tr><tr>
+  <td class="c"><span class="rk ">22</span></td>
+  <td><b>勤上股份</b></td>
+  <td class="c mono muted">002638</td>
+  <td class="c mono">4.23</td>
+  <td class="c mono up">+2.42%</td>
+  <td class="c">水风井</td>
+  <td class="c muted">六四</td>
+  <td class="c">巽木</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">59/79</td>
+  <td class="c mono up">4.17</td>
+  <td class="c mono down">4.03</td>
+  <td class="c mono" style="color:#a9812f">4.44</td>
+  <td class="c mono muted">0.8</td>
+</tr><tr>
+  <td class="c"><span class="rk ">23</span></td>
+  <td><b>天邦食品</b></td>
+  <td class="c mono muted">002124</td>
+  <td class="c mono">2.00</td>
+  <td class="c mono ">0%</td>
+  <td class="c">雷火丰</td>
+  <td class="c muted">上六</td>
+  <td class="c">离火</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">60/79</td>
+  <td class="c mono up">1.97</td>
+  <td class="c mono down">1.91</td>
+  <td class="c mono" style="color:#a9812f">2.10</td>
+  <td class="c mono muted">1.4</td>
+</tr><tr>
+  <td class="c"><span class="rk ">24</span></td>
+  <td><b>华发股份</b></td>
+  <td class="c mono muted">600325</td>
+  <td class="c mono">2.64</td>
+  <td class="c mono down">-1.86%</td>
+  <td class="c">风水涣</td>
+  <td class="c muted">初六</td>
+  <td class="c">巽木</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">77/61</td>
+  <td class="c mono up">2.61</td>
+  <td class="c mono down">2.53</td>
+  <td class="c mono" style="color:#a9812f">2.79</td>
+  <td class="c mono muted">1.7</td>
+</tr><tr>
+  <td class="c"><span class="rk ">25</span></td>
+  <td><b>升达林业</b></td>
+  <td class="c mono muted">002259</td>
+  <td class="c mono">4.66</td>
+  <td class="c mono up">+1.3%</td>
+  <td class="c">火雷噬嗑</td>
+  <td class="c muted">六三</td>
+  <td class="c">离火</td>
+  <td class="c up">用生体</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">69/69</td>
+  <td class="c mono up">4.60</td>
+  <td class="c mono down">4.46</td>
+  <td class="c mono" style="color:#a9812f">4.91</td>
+  <td class="c mono muted">0.8</td>
+</tr><tr>
+  <td class="c"><span class="rk ">26</span></td>
+  <td><b>合兴包装</b></td>
+  <td class="c mono muted">002228</td>
+  <td class="c mono">3.15</td>
+  <td class="c mono up">+0.32%</td>
+  <td class="c">雷地豫</td>
+  <td class="c muted">六二</td>
+  <td class="c">震木</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">67/71</td>
+  <td class="c mono up">3.11</td>
+  <td class="c mono down">3.01</td>
+  <td class="c mono" style="color:#a9812f">3.32</td>
+  <td class="c mono muted">0.5</td>
+</tr><tr>
+  <td class="c"><span class="rk ">27</span></td>
+  <td><b>大北农</b></td>
+  <td class="c mono muted">002385</td>
+  <td class="c mono">3.02</td>
+  <td class="c mono ">0%</td>
+  <td class="c">天雷无妄</td>
+  <td class="c muted">六三</td>
+  <td class="c">乾金</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>69</b></td>
+  <td class="c mono muted">72/65</td>
+  <td class="c mono up">2.98</td>
+  <td class="c mono down">2.89</td>
+  <td class="c mono" style="color:#a9812f">3.19</td>
+  <td class="c mono muted">1.1</td>
+</tr><tr>
+  <td class="c"><span class="rk ">28</span></td>
+  <td><b>广深铁路</b></td>
+  <td class="c mono muted">601333</td>
+  <td class="c mono">3.11</td>
+  <td class="c mono down">-0.32%</td>
+  <td class="c">巽为风</td>
+  <td class="c muted">初六</td>
+  <td class="c">巽木</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>68</b></td>
+  <td class="c mono muted">65/71</td>
+  <td class="c mono up">3.07</td>
+  <td class="c mono down">2.97</td>
+  <td class="c mono" style="color:#a9812f">3.22</td>
+  <td class="c mono muted">1.8</td>
+</tr><tr>
+  <td class="c"><span class="rk ">29</span></td>
+  <td><b>中国东航</b></td>
+  <td class="c mono muted">600115</td>
+  <td class="c mono">3.10</td>
+  <td class="c mono down">-1.9%</td>
+  <td class="c">离为火</td>
+  <td class="c muted">初九</td>
+  <td class="c">离火</td>
+  <td class="c ">体用比和</td>
+  <td class="c mono"><b>67</b></td>
+  <td class="c mono muted">69/66</td>
+  <td class="c mono up">3.07</td>
+  <td class="c mono down">2.99</td>
+  <td class="c mono" style="color:#a9812f">3.27</td>
+  <td class="c mono muted">5.3</td>
+</tr><tr>
+  <td class="c"><span class="rk ">30</span></td>
+  <td><b>冠城新材</b></td>
+  <td class="c mono muted">600067</td>
+  <td class="c mono">2.46</td>
+  <td class="c mono down">-0.81%</td>
+  <td class="c">火天大有</td>
+  <td class="c muted">初九</td>
+  <td class="c">离火</td>
+  <td class="c ">体克用</td>
+  <td class="c mono"><b>67</b></td>
+  <td class="c mono muted">73/61</td>
+  <td class="c mono up">2.44</td>
+  <td class="c mono down">2.38</td>
+  <td class="c mono" style="color:#a9812f">2.60</td>
+  <td class="c mono muted">0.6</td>
+</tr></tbody></table>
+
+<div class="note" style="margin-top:16px">
+<b>为何主选不是第一名：</b>榜首【胜利精密 002426】综合 89 分、泽地萃六二「引吉，无咎」本是好爻，但<b>变卦为「困」</b>——萃极而困，聚人之后受困，是「先热后冷」之象；且股价仅 2.33 元，回撤弹性大。<b>主选【久远银海 002777】</b>取的是卦体更正：乾为天九五「飞龙在天，利见大人」，变卦「火天大有」卦辞仅「元亨」二字，是最干净的向上之象；且今日 81／明日 79，双时空最均衡，戌月乾金得旺。明日转「天山遁」，遁者退也——故明日只许低吸 13.57，不许追高。
+</div>
+
+<div class="note" style="margin-top:12px">
+<b>扫描口径：</b>穷举沪深主板 8000 个代码段取得 3125 只有效行情 → 剔除 ST／退市／停牌／涨跌停／成交额＜5000 万／换手异常 → 2030 只入围 → 以「今日收盘（申时）」与「明日巳时」两个时空分别起卦，取两卦均 ≥58 分者 512 只 → 同卦同动爻视为同一卦断，去重后按综合分排序。<br>
+<b>读表须知：</b>分数只由「卦辞判词＋动爻判词＋体用生克＋时令旺衰」四项合成，<b>卦名本身不计分</b>。因此「否」「困」「蹇」「讼」这类卦名不吉者，若动爻辞带吉语，仍可能拿到高分——看到这两类卦名（否／困／蹇／讼／剥）请直接降级处理，这是本模型的已知偏差。
+</div>
+
+<div class="foot">
+卦以八除，爻以六除，余零取八或六<br>
+本页由《周易》梅花易数规则程序化生成，属传统文化研究与娱乐实验，<b>不构成投资建议</b>
+</div>
+</div></body></html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>因子体检 · 持仓风险扫描</title>
+<meta name="description" content="用低波、反转、缩量三因子做横截面排名，标出最差一档（黑名单）与平台区，用于持仓风险体检。不构成投资建议。">
+<meta name="theme-color" content="#f7f2e7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23b3341f'/%3E%3Cpath d='M22 68h18v-9H22zm0-14h18v-9H22zm0-14h18v-9H22z' fill='%23fff'/%3E%3Cpath d='M52 68h26v-9H52zm0-14h26v-9H52zm0-14h26v-9H52z' fill='%23fff' opacity='.55'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#f7f2e7;--panel:#fffdf7;--panel2:#fbf6ea;--ink:#241f1a;--ink2:#5f5749;--ink3:#8b8172;
+  --line:#e3d8c2;--red:#b3341f;--red2:#d94a2b;--green:#1a7a5c;--gold:#a9812f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(1200px 600px at 10% -10%,#fffdf6,rgba(255,253,246,0) 60%),radial-gradient(900px 500px at 100% 0%,#f3ead8,rgba(243,234,216,0) 55%),var(--paper);
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;z-index:0;
+  background-image:repeating-linear-gradient(0deg,rgba(160,140,100,.04) 0 1px,transparent 1px 4px)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:26px 20px 80px}
+h1,h2,.serif{font-family:"Songti SC","SimSun","Noto Serif SC",serif}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:6px 0 18px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.logo{width:56px;height:56px;border-radius:14px;background:var(--red);display:grid;place-items:center;flex:0 0 auto}
+.logo svg{width:30px;height:30px}
+.h-main{flex:1;min-width:200px}
+h1{font-size:27px;letter-spacing:5px;font-weight:600}
+.h-sub{font-size:12px;color:var(--ink3);letter-spacing:2px;margin-top:6px}
+.h-tag{font-size:11px;color:var(--red);border:1px solid rgba(179,52,31,.35);border-radius:999px;padding:6px 12px;letter-spacing:1px;background:rgba(179,52,31,.04)}
+.bar{display:flex;flex-wrap:wrap;gap:9px 22px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 17px;margin-bottom:20px;font-size:13px}
+.bar .k{color:var(--ink3);font-size:12px;margin-right:5px}
+.bar .pill{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;font-family:"Songti SC",serif}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px -18px rgba(90,70,40,.45);padding:18px;margin-bottom:18px}
+.sec-h{display:flex;align-items:baseline;gap:9px;margin:24px 0 11px 2px}
+.sec-h .no{width:22px;height:22px;border-radius:4px;background:var(--red);color:#fff;font-size:12px;display:grid;place-items:center;font-family:"Songti SC",serif;flex:0 0 auto}
+.sec-h h2{font-size:18px;letter-spacing:3px;font-weight:600}
+.sec-h .tip{font-size:12px;color:var(--ink3)}
+.form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px}
+.field label{font-size:11.5px;color:var(--ink3);letter-spacing:1px}
+input{font-family:inherit;font-size:15px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px 13px;outline:none;transition:.2s;width:100%}
+input:focus{border-color:rgba(179,52,31,.5);background:#fff;box-shadow:0 0 0 3px rgba(179,52,31,.06)}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;padding:11px 20px;font-size:14px;letter-spacing:1.5px;color:#fff;background:var(--red);transition:.18s}
+button:hover{background:var(--red2)}
+.sbox{position:relative}
+.sug{position:absolute;top:calc(100% + 6px);left:0;width:100%;max-height:230px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 16px 36px -18px rgba(90,70,40,.55);display:none;z-index:30}
+.sug.on{display:block}
+.sug div[data-i]{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.sug div[data-i]:hover,.sug div.act{background:var(--panel2)}
+.sug span{color:var(--ink3);font-size:11px;font-family:Consolas,monospace}
+.sug .empty{display:block;padding:11px 13px;color:var(--ink3);font-size:12.5px;cursor:default}
+/* 体检结果 */
+#checkArea{display:none;margin-top:16px}
+.badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 18px;font-family:"Songti SC",serif;font-size:17px;letter-spacing:3px;border:1px solid}
+.b-bad{color:#fff;background:var(--red);border-color:var(--red)}
+.b-watch{color:#8a6a1f;background:rgba(169,129,47,.1);border-color:rgba(169,129,47,.4)}
+.b-ok{color:var(--green);background:rgba(26,122,92,.07);border-color:rgba(26,122,92,.3)}
+.b-strong{color:#fff;background:var(--gold);border-color:var(--gold)}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.rc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.rc .l{font-size:11px;color:var(--ink3)}
+.rc .n{font-family:"Songti SC",serif;font-size:19px;margin-top:3px}
+.rkbar{height:6px;background:#efe6d4;border-radius:4px;overflow:hidden;margin-top:6px}
+.rkbar>i{display:block;height:100%;background:linear-gradient(90deg,#1a7a5c,#a9812f,#b3341f)}
+/* 表格 */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:660px}
+th{text-align:left;font-weight:500;font-size:11px;color:var(--ink3);letter-spacing:.5px;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid #f0e9da;white-space:nowrap;font-family:"Songti SC",serif}
+td.m{font-variant-numeric:tabular-nums;font-family:Consolas,monospace;font-size:12px}
+tbody tr:hover{background:#fdf8ec}
+.up{color:var(--red)}.down{color:var(--green)}.muted{color:var(--ink3)}
+.rank{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;font-size:10.5px;color:#fff;background:#c9bda4;font-family:sans-serif}
+.rank.bad{background:var(--red)}
+/* 档位条 */
+.ladder{position:relative;display:flex;gap:4px;margin:16px 0 6px;height:120px;align-items:stretch}
+.ladder::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.ladder .st{flex:1;position:relative}
+.ladder .st i{position:absolute;left:0;right:0;display:block;border-radius:2px;background:linear-gradient(180deg,#e9dfc9,#d8ccb2)}
+.ladder .st.bad i{background:linear-gradient(180deg,#d4553b,#b3341f)}
+.ladder .st.top i{background:linear-gradient(180deg,#d9b45a,#a9812f)}
+.ladder-x{display:flex;gap:3px;font-size:10px;color:var(--ink3);text-align:center}
+.ladder-x span{flex:1}
+.note{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:12px 15px;font-size:12.5px;line-height:1.9;color:#7a3125}
+.note b{color:var(--red)}
+footer{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:28px;line-height:2}
+@media(max-width:600px){
+  h1{font-size:22px;letter-spacing:3px}.h-tag{display:none}
+  .wrap{padding:18px 14px 70px}
+  .read{grid-template-columns:1fr 1fr}
+  .field{min-width:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="index.html" id="backLink" style="display:inline-block;margin-bottom:14px;font-size:12px;color:var(--ink2);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px">← 玄学选股</a>
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 100 100"><path d="M16 74h26V64H16zm0-20h26V44H16zm0-20h26V24H16z" fill="#fff"/><path d="M58 74h26V64H58zm0-20h26V44H58zm0-20h26V24H58z" fill="#fff" opacity=".5"/></svg>
+    </div>
+    <div class="h-main">
+      <h1>因子体检</h1>
+      <div class="h-sub">低波 · 反转 · 缩量 · 横截面排名</div>
+    </div>
+    <div class="h-tag">不预测涨跌 · 只做相对排位</div>
+  </header>
+
+  <div class="bar" id="metaBar"></div>
+
+  <section class="sec">
+    <div class="sec-h"><span class="no">壹</span><h2>持仓体检</h2><span class="tip">输入代码或名称，看它在全市场的位置</span></div>
+    <div class="card">
+      <div class="form">
+        <div class="field">
+          <label>股票代码 / 名称</label>
+          <div class="sbox">
+            <input id="code" placeholder="600519 或 茅台" autocomplete="off">
+            <div class="sug" id="sug"></div>
+          </div>
+        </div>
+        <button id="btnCheck">体 检</button>
+        <button id="btnRand" style="background:transparent;color:var(--ink2);border:1px solid var(--line)">随手一只</button>
+      </div>
+      <div id="checkArea"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><span class="no">贰</span><h2>分层总览</h2><span class="tip">十分档 · 历史平均收益（未来5日）</span></div>
+    <div class="card">
+      <div class="ladder" id="ladder"></div>
+      <div class="ladder-x" id="ladderX"></div>
+      <div class="note" style="margin-top:14px">
+        <b>怎么读：</b>第 <b>1</b> 档（最差 10%）在 779 个交易日的回测中，未来 5 日平均 <b>−0.41%</b>，是<b>唯一显著为负</b>的一档；第 2–10 档都在 <b>+0.17%~+0.35%</b> 之间，是一条<b>平台</b>，档位之间差异很小。
+        所以本页的用法是<b>排雷（找第 1 档）</b>，不是<b>精选（照第 10 档买）</b>。
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><span class="no">叁</span><h2>黑名单</h2><span class="tip">第 1 档 · 按因子分从低到高</span></div>
+    <div class="card">
+      <div class="tbl-wrap"><table><thead><tr>
+        <th style="width:34px">#</th><th>名称</th><th>代码</th><th>现价</th><th>今日</th>
+        <th>波动率</th><th>20日涨幅</th><th>缩量比</th><th>因子分</th><th>档位</th>
+      </tr></thead><tbody id="badBody"></tbody></table></div>
+      <div class="muted" id="badFoot" style="font-size:11.5px;margin-top:10px"></div>
+    </div>
+  </section>
+
+  <div class="note">
+    <b>说明与限制：</b>因子＝低波（60日日波动率取负）＋反转（20日涨幅取负）＋缩量（5日均量/60日均量取负），经 MAD 去极值、按 20 日均成交额五分位做<b>规模中性化</b>后等权合成。
+    数据为 <span id="asOf"></span> 收盘，覆盖沪深主板 2999 只。<b>回测结论来自 2023-07~2026-10 单一区间的样本内统计，未来可能失效</b>；且分段检验显示"优选高分行"并不稳定，只有"排除最差一档"相对可靠。
+    本页不构成投资建议。
+  </div>
+
+  <footer>因子体检 · 低波 / 反转 / 缩量<br><span style="opacity:.7">排名是相对的，收益是不确定的</span></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const COLS = ['code','name','price','chg','vol','rev','vshr','amt'];
+const R = DATA.list.map(a => { const o = {}; COLS.forEach((k, i) => o[k] = a[i]); return o; });
+const MAP = new Map(R.map(r => [r.code, r]));
+
+/* ---------- 因子计算：MAD 去极值 → 规模分组 z-score → 合成 → 十分档 ---------- */
+const median = a => { const s = [...a].sort((x, y) => x - y); const n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+function madClamp(vals) {
+  const m = median(vals), dev = vals.map(v => Math.abs(v - m)), md = median(dev) * 1.4826 || 1e-9;
+  return vals.map(v => Math.max(m - 3 * md, Math.min(m + 3 * md, v)));
+}
+function zs(vals) {
+  const n = vals.length, mu = vals.reduce((a, b) => a + b, 0) / n;
+  const sd = Math.sqrt(vals.reduce((a, b) => a + (b - mu) ** 2, 0) / n) || 1e-9;
+  return vals.map(v => (v - mu) / sd);
+}
+/* 原始值越小越好 → 取负 */
+const RAW = {
+  lowvol: r => -r.vol,
+  rev: r => -r.rev,
+  vshr: r => -r.vshr
+};
+const KEYS = Object.keys(RAW);
+const clamped = {};
+KEYS.forEach(k => { const v = madClamp(R.map(RAW[k])); R.forEach((r, i) => r['c_' + k] = v[i]); });
+
+/* 按 20 日均额五分位分组，组内标准化（规模中性化） */
+const order = [...R].sort((a, b) => a.amt - b.amt);
+const G = 5;
+for (let g = 0; g < G; g++) {
+  const part = order.slice(Math.floor(g * R.length / G), Math.floor((g + 1) * R.length / G));
+  KEYS.forEach(k => {
+    const z = zs(part.map(r => r['c_' + k]));
+    part.forEach((r, i) => r['z_' + k] = z[i]);
+  });
+}
+R.forEach(r => {
+  KEYS.forEach(k => { if (r['z_' + k] == null) r['z_' + k] = 0; });
+  r.score = (r.z_lowvol + r.z_rev + r.z_vshr) / 3;
+});
+/* 十分档：1 = 最差分 */
+const sorted = [...R].sort((a, b) => a.score - b.score);
+sorted.forEach((r, i) => { r.tier = Math.min(10, Math.floor(i / R.length * 10) + 1); r.pct = (i + 1) / R.length; });
+
+const TIER_AVG = [-0.41, 0.17, 0.28, 0.30, 0.34, 0.35, 0.33, 0.33, 0.31, 0.26];
+
+/* ---------- 渲染 ---------- */
+const fmt = (v, d = 2) => (+v).toFixed(d);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+function renderMeta() {
+  const m = DATA.meta;
+  const weak = m.mkt20 < 0;
+  document.getElementById('metaBar').innerHTML = `
+    <div><span class="k">数据日期</span><b>${m.asOf}</b>（收盘）</div>
+    <div><span class="k">覆盖</span><b>${m.count}</b> 只·沪深主板</div>
+    <div><span class="k">市场20日中位</span><span class="pill" style="color:${weak ? 'var(--green)' : 'var(--red)'}">${m.mkt20 > 0 ? '+' : ''}${m.mkt20}%</span></div>
+    <div><span class="k">择时参考</span><b style="color:${weak ? 'var(--green)' : 'var(--red)'}">${weak ? '偏弱 · 宜降仓' : '偏强 · 可正常'}</b></div>`;
+  document.getElementById('asOf').textContent = m.asOf;
+}
+
+function renderLadder() {
+  const max = Math.max(...TIER_AVG.map(v => Math.abs(v)));
+  const H = 56;   // 半高
+  document.getElementById('ladder').innerHTML = TIER_AVG.map((v, i) => {
+    const h = Math.max(3, Math.abs(v) / max * H);
+    const cls = i === 0 ? 'bad' : i === 9 ? 'top' : '';
+    const style = v >= 0 ? `bottom:50%;height:${h}px` : `top:50%;height:${h}px`;
+    return `<div class="st ${cls}"><i style="${style}" title="第${i + 1}档 ${v > 0 ? '+' : ''}${v}%"></i></div>`;
+  }).join('');
+  document.getElementById('ladderX').innerHTML = TIER_AVG.map((v, i) =>
+    `<span style="color:${i === 0 ? 'var(--red)' : 'var(--ink3)'}">${i + 1}<br><b style="font-size:9.5px">${v > 0 ? '+' : ''}${v}</b></span>`).join('');
+}
+
+function renderBad() {
+  const bad = sorted.slice(0, 40);
+  document.getElementById('badBody').innerHTML = bad.map((r, i) => `<tr>
+    <td><span class="rank bad">${i + 1}</span></td>
+    <td>${esc(r.name)}</td>
+    <td class="m muted">${r.code}</td>
+    <td class="m">${fmt(r.price)}</td>
+    <td class="m ${r.chg > 0 ? 'up' : 'down'}">${r.chg > 0 ? '+' : ''}${fmt(r.chg)}%</td>
+    <td class="m">${fmt(r.vol)}%</td>
+    <td class="m ${r.rev > 0 ? 'up' : 'down'}">${r.rev > 0 ? '+' : ''}${fmt(r.rev, 1)}%</td>
+    <td class="m">${fmt(r.vshr)}</td>
+    <td class="m">${fmt(r.score)}</td>
+    <td class="m" style="color:var(--red)">第${r.tier}档</td>
+  </tr>`).join('');
+  const n = sorted.filter(r => r.tier === 1).length;
+  document.getElementById('badFoot').textContent = `第1档共 ${n} 只，此处列出因子分最低的 40 只。波动率越高、20日涨幅越大、缩量比越高，排名越差。`;
+}
+
+/* ---------- 体检 ---------- */
+function tierClass(t) { return t === 1 ? ['b-bad', '黑名单'] : t === 2 ? ['b-watch', '观察区'] : t <= 9 ? ['b-ok', '平台区'] : ['b-strong', '优选端']; }
+function check(code) {
+  const r = MAP.get(code);
+  const el = document.getElementById('checkArea');
+  if (!r) { el.style.display = 'block'; el.innerHTML = '<div class="muted" style="margin-top:12px">没有这只票的数据（仅覆盖沪深主板，且需有 70 根以上K线）</div>'; return; }
+  const [cls, label] = tierClass(r.tier);
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px">
+      <span class="serif" style="font-size:21px;letter-spacing:2px;font-weight:600">${esc(r.name)}</span>
+      <span class="muted" style="font-size:12.5px">${r.code}</span>
+      <span class="mono" style="font-family:Consolas,monospace;font-size:17px">${fmt(r.price)}</span>
+      <span class="${r.chg > 0 ? 'up' : 'down'}" style="font-size:13px">${r.chg > 0 ? '+' : ''}${fmt(r.chg)}%</span>
+      <span class="badge ${cls}" style="margin-left:auto">${label} · 第 ${r.tier} 档</span>
+    </div>
+    <div class="muted" style="font-size:12px">全市场 <b>${Math.round(r.pct * R.length)}</b> / ${R.length} 名（<b>名次越靠前越差</b>）</div>
+    <div class="rkbar"><i style="width:${Math.max(2, r.pct * 100)}%"></i></div>
+    <div class="read">
+      <div class="rc"><div class="l">60日波动率（越低越好）</div><div class="n">${fmt(r.vol)}<span style="font-size:12px">%</span></div></div>
+      <div class="rc"><div class="l">20日涨幅（越低越好）</div><div class="n ${r.rev > 0 ? 'up' : 'down'}">${r.rev > 0 ? '+' : ''}${fmt(r.rev, 1)}<span style="font-size:12px">%</span></div></div>
+      <div class="rc"><div class="l">缩量比 5日/60日（越低越好）</div><div class="n">${fmt(r.vshr)}</div></div>
+    </div>
+    <div class="note" style="margin-top:14px">${r.tier === 1
+      ? '<b>在第 1 档。</b>这一档在回测中未来 5 日平均 −0.41%，是唯一显著为负的一档。若你有持仓，可考虑降低权重，而不是补仓摊薄。'
+      : r.tier === 2
+        ? '在第 2 档（观察区）。历史上这一档约 +0.17%，谈不上差，但也没有优势，建议不加仓。'
+        : r.tier === 10
+          ? '在第 10 档（优选端）。注意：回测显示第 2–10 档是一条平台（+0.17%~+0.35%），<b>高分行并不比中间档更好</b>，不要把"排第一"当成买入理由。'
+          : '在平台区。历史上这一档未来 5 日约 +' + TIER_AVG[r.tier - 1] + '%，与相邻档差别很小，不构成加仓/减仓理由。'}</div>`;
+}
+
+/* 搜索建议 */
+const norm = v => String(v || '').replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[\s·]/g, '').toLowerCase();
+function search(q) {
+  const nq = norm(q); if (!nq) return [];
+  const out = [];
+  for (const r of R) {
+    const nm = norm(r.name);
+    let s = -1;
+    if (r.code === nq) s = 99;
+    else if (nm === nq) s = 90;
+    else if (nm.startsWith(nq)) s = 80 - nm.length;
+    else if (nm.includes(nq)) s = 60 - nm.indexOf(nq) * 3;
+    else if (/^\d+$/.test(nq) && r.code.startsWith(nq)) s = 40;
+    if (s >= 0) out.push({ r, s });
+  }
+  out.sort((a, b) => b.s - a.s);
+  return out.slice(0, 8).map(o => o.r);
+}
+const inp = document.getElementById('code'), sug = document.getElementById('sug');
+let list = [], idx = -1;
+function paint() {
+  if (!list.length) { sug.classList.remove('on'); sug.innerHTML = ''; return; }
+  sug.innerHTML = list.map((r, i) => `<div data-i="${i}" class="${i === idx ? 'act' : ''}">${esc(r.name)}<span>${r.code}　${fmt(r.price)}</span></div>`).join('');
+  sug.classList.add('on');
+  sug.querySelectorAll('div[data-i]').forEach(d => d.onclick = () => pick(+d.dataset.i));
+}
+function pick(i) { const r = list[i]; if (!r) return; inp.value = r.code; sug.classList.remove('on'); idx = -1; list = []; check(r.code); }
+inp.addEventListener('input', () => {
+  idx = -1;
+  const q = inp.value.trim();
+  if (!q || /^\d{6}$/.test(q)) { list = []; sug.classList.remove('on'); if (/^\d{6}$/.test(q)) check(q); return; }
+  list = search(q);
+  if (!list.length) { sug.innerHTML = '<div class="empty">未找到（仅覆盖沪深主板）</div>'; sug.classList.add('on'); return; }
+  paint();
+});
+inp.addEventListener('keydown', e => {
+  const open = sug.classList.contains('on') && list.length;
+  if (e.key === 'ArrowDown' && open) { e.preventDefault(); idx = (idx + 1) % list.length; paint(); }
+  else if (e.key === 'ArrowUp' && open) { e.preventDefault(); idx = (idx - 1 + list.length) % list.length; paint(); }
+  else if (e.key === 'Enter') { if (idx >= 0 && list.length) pick(idx); else { const c = norm(inp.value); const hit = search(c)[0]; if (hit) { inp.value = hit.code; check(hit.code); } } }
+  else if (e.key === 'Escape') { sug.classList.remove('on'); idx = -1; }
+});
+document.addEventListener('click', e => { if (!e.target.closest('.sbox')) sug.classList.remove('on'); });
+document.getElementById('btnCheck').onclick = () => {
+  const v = inp.value.trim();
+  if (/^\d{6}$/.test(v)) return check(v);
+  const hit = search(v)[0];
+  if (hit) { inp.value = hit.code; check(hit.code); } else check(v);
+};
+document.getElementById('btnRand').onclick = () => {
+  const pick2 = sorted[Math.floor(Math.random() * Math.min(600, sorted.length))];
+  inp.value = pick2.code; check(pick2.code);
+};
+
+document.querySelectorAll('a#backLink').forEach(a => {
+  if (location.search && !a.getAttribute('href').includes('?')) a.href += location.search;
+});
+renderMeta(); renderLadder(); renderBad();
+(function () { const m = (location.hash || '').match(/^#(\d{6})$/); if (m) { inp.value = m[1]; check(m[1]); } })();
+</script>
+</body>
+</html>

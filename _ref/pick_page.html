@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>卜卦选股 · 一卦定股，再卦定时</title>
+<meta name="description" content="先以数字卦从全市场选出三只卦象最好的股票，再用当下时辰起一卦复占，结合技术面与最新公告给出能否入场。">
+<meta name="theme-color" content="#f7f2e7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23b3341f'/%3E%3Ccircle cx='50' cy='50' r='26' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M50 24a13 13 0 0 1 0 26 13 13 0 0 0 0 26' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root{--paper:#f7f2e7;--panel:#fffdf7;--panel2:#fbf6ea;--ink:#241f1a;--ink2:#5f5749;--ink3:#8b8172;
+  --line:#e3d8c2;--red:#b3341f;--red2:#d94a2b;--green:#1a7a5c;--gold:#a9812f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(1200px 600px at 10% -10%,#fffdf6,rgba(255,253,246,0) 60%),radial-gradient(900px 500px at 100% 0%,#f3ead8,rgba(243,234,216,0) 55%),var(--paper);
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;z-index:0;
+  background-image:repeating-linear-gradient(0deg,rgba(160,140,100,.04) 0 1px,transparent 1px 4px)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:26px 20px 80px}
+h1,h2,.serif{font-family:"Songti SC","SimSun","Noto Serif SC",serif}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:4px 0 16px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.logo{width:52px;height:52px;border-radius:14px;background:var(--red);display:grid;place-items:center;flex:0 0 auto}
+.h-main{flex:1;min-width:190px}
+h1{font-size:26px;letter-spacing:5px;font-weight:600}
+.h-sub{font-size:12px;color:var(--ink3);letter-spacing:2px;margin-top:5px}
+.h-tag{font-size:11px;color:var(--red);border:1px solid rgba(179,52,31,.35);border-radius:999px;padding:6px 12px;letter-spacing:1px;background:rgba(179,52,31,.04)}
+.bar{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 16px;margin-bottom:18px;font-size:12.5px}
+.bar .k{color:var(--ink3);margin-right:5px}
+.bar .pill{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-family:"Songti SC",serif}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px -18px rgba(90,70,40,.45);padding:18px;margin-bottom:16px}
+/* 页签 */
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;padding:13px 10px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);
+  font-family:"Songti SC",serif;font-size:16px;letter-spacing:3px;cursor:pointer;transition:.18s}
+.tab:hover{border-color:rgba(179,52,31,.3)}
+.tab.on{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 10px 24px -14px rgba(179,52,31,.8)}
+.pane{display:none}.pane.on{display:block}
+.mini{width:100%;margin-top:11px;padding:9px 0;font-size:13px;letter-spacing:2px;background:transparent;color:var(--red);
+  border:1px solid rgba(179,52,31,.4);border-radius:8px}
+.mini:hover{background:rgba(179,52,31,.06);color:var(--red)}
+/* 起卦区 */
+.hero{text-align:center;padding:26px 18px 22px}
+.hero .orn{font-size:30px;letter-spacing:12px;color:var(--red);opacity:.5;font-family:"Songti SC",serif}
+.btn-big{font-family:"Songti SC",serif;font-size:21px;letter-spacing:8px;padding:18px 46px;border-radius:14px;color:#fff;background:var(--red);border:none;cursor:pointer;box-shadow:0 12px 26px -14px rgba(179,52,31,.7);transition:.2s}
+.btn-big:hover{background:var(--red2);transform:translateY(-1px)}
+.btn-big:disabled{opacity:.55;cursor:default;transform:none}
+.hero .hint{font-size:12px;color:var(--ink3);margin-top:14px;line-height:1.8}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--ink3);font-size:11.5px;letter-spacing:2px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;max-width:520px;margin:0 auto}
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:200px;text-align:left}
+.field label{font-size:11.5px;color:var(--ink3);letter-spacing:1px}
+input{font-family:inherit;font-size:15px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px 13px;outline:none;width:100%}
+input:focus{border-color:rgba(179,52,31,.5);background:#fff;box-shadow:0 0 0 3px rgba(179,52,31,.06)}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;padding:11px 20px;font-size:14px;letter-spacing:1.5px;color:#fff;background:var(--red);transition:.18s}
+button:hover{background:var(--red2)}
+button.ghost{background:transparent;color:var(--ink2);border:1px solid var(--line)}
+button.ghost:hover{background:var(--panel2);color:var(--ink)}
+.sbox{position:relative}
+.sug{position:absolute;top:calc(100% + 6px);left:0;width:100%;max-height:220px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 16px 36px -18px rgba(90,70,40,.55);display:none;z-index:30}
+.sug.on{display:block}
+.sug div[data-i]{padding:9px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.sug div[data-i]:hover,.sug div.act{background:var(--panel2)}
+.sug span{color:var(--ink3);font-size:11px;font-family:Consolas,monospace}
+.sug .empty{display:block;padding:11px 13px;color:var(--ink3);font-size:12.5px;cursor:default}
+/* 步骤 */
+.step{display:none}
+.step.on{display:block}
+.step-h{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.step-h .no{width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:13px;font-family:"Songti SC",serif}
+.step-h h2{font-size:18px;letter-spacing:3px}
+.step-h .tip{font-size:12px;color:var(--ink3)}
+/* 候选 */
+.cands{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:880px){.cands{grid-template-columns:1fr}}
+.cand{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:15px;position:relative;transition:.2s;cursor:pointer}
+.cand:hover{border-color:rgba(179,52,31,.35);transform:translateY(-2px)}
+.cand.sel{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(179,52,31,.09)}
+.cand.sel::after{content:"已选";position:absolute;top:-9px;left:13px;background:var(--red);color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;letter-spacing:1px}
+.cand .idx{position:absolute;top:12px;right:13px;font-family:"Songti SC",serif;font-size:13px;color:var(--ink3)}
+.cand .nm{font-family:"Songti SC",serif;font-size:19px;font-weight:600;letter-spacing:1px}
+.cand .cd{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.cand .gua{margin-top:12px;display:flex;gap:10px;align-items:flex-start}
+.cand .gn{font-family:"Songti SC",serif;font-size:16px;letter-spacing:1px}
+.cand .gs{font-size:11.5px;color:var(--ink3);margin-top:2px;line-height:1.6}
+.cand .sc{margin-top:10px;display:flex;align-items:baseline;gap:6px}
+.cand .sc b{font-family:"Songti SC",serif;font-size:26px;color:var(--red)}
+.cand .sc span{font-size:11px;color:var(--ink3)}
+.badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;border:1px solid;margin-left:6px}
+.b1{color:#fff;background:var(--red);border-color:var(--red)}
+.b2{color:var(--red);background:rgba(179,52,31,.07);border-color:rgba(179,52,31,.35)}
+.b3{color:var(--gold);background:rgba(169,129,47,.08);border-color:rgba(169,129,47,.35)}
+.b4{color:var(--ink2);background:rgba(95,87,73,.06);border-color:rgba(95,87,73,.25)}
+.b5{color:var(--green);background:rgba(26,122,92,.07);border-color:rgba(26,122,92,.32)}
+.actions{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+/* 深入分析 */
+.ask{text-align:center;padding:8px 0 4px}
+.ask p{font-size:14px;color:var(--ink2);line-height:1.9}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 10px 30px -18px rgba(90,70,40,.45)}
+.dh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.dh .nm{font-family:"Songti SC",serif;font-size:21px;font-weight:600;letter-spacing:1px}
+.dh .cd{font-size:12px;color:var(--ink3)}
+.dh .px{font-family:"Songti SC",serif;font-size:18px;font-weight:600}
+.dh .src{font-size:10.5px;color:var(--ink3);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+@media(max-width:880px){.dgrid{grid-template-columns:1fr}}
+.pnl{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px}
+.pnl .t{font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:8px;font-weight:600}
+.pnl .big{font-family:"Songti SC",serif;font-size:18px;letter-spacing:1px}
+.kv{display:grid;grid-template-columns:72px 1fr;gap:4px 10px;font-size:12.5px;margin-top:6px}
+.kv .k{color:var(--ink3)}
+.q{font-family:"Songti SC",serif;font-size:13.5px;line-height:1.75;margin-top:5px}
+.news{list-style:none;font-size:12px}
+.news li{padding:6px 0;border-bottom:1px dashed var(--line);line-height:1.55;display:flex;gap:7px}
+.news li:last-child{border:none}
+.news .d{color:var(--ink3);font-size:10.5px;flex:0 0 auto;font-family:Consolas,monospace}
+.news .tt{flex:1;color:var(--ink2)}
+.tagx{font-size:10px;padding:1px 5px;border-radius:4px;flex:0 0 auto;align-self:flex-start;margin-top:1px}
+.t-good{background:rgba(179,52,31,.1);color:var(--red)}
+.t-bad{background:rgba(26,122,92,.1);color:var(--green)}
+.verdict{margin-top:14px;border-radius:12px;padding:14px 16px;border:1px solid}
+.v-in{background:linear-gradient(180deg,#fdf3ec,#fbeade);border-color:#eccbb6}
+.v-wait{background:linear-gradient(180deg,#fdf8e8,#faf1d8);border-color:#e8d9ae}
+.v-out{background:linear-gradient(180deg,#f0f7f3,#e6f1eb);border-color:#c6ddd1}
+.vt{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bg-badge{font-family:"Songti SC",serif;font-size:18px;letter-spacing:4px;padding:5px 15px;border-radius:999px;color:#fff}
+.b-in{background:var(--red)}.b-wait{background:var(--gold)}.b-out{background:var(--green)}
+.vote{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.vote span{font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--line);background:#fff;color:var(--ink2)}
+.reason{font-size:13px;line-height:1.95;margin-top:10px;color:#3b3125;font-family:"Songti SC",serif}
+.reason b{color:var(--red)}
+.pts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+@media(max-width:600px){.pts{grid-template-columns:1fr 1fr}}
+.pt{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.pt .l{font-size:10.5px;color:var(--ink3)}
+.pt .n{font-family:"Songti SC",serif;font-size:16px;margin-top:2px}
+.note{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:11px 14px;font-size:12px;line-height:1.8;color:#7a3125;margin-top:12px}
+.muted{color:var(--ink3)}
+footer{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:26px;line-height:2}
+footer a{color:var(--ink3)}
+.up{color:var(--red)}.down{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><svg viewBox="0 0 100 100" width="28" height="28"><circle cx="50" cy="50" r="26" fill="none" stroke="#fff" stroke-width="4"/><path d="M50 24a13 13 0 0 1 0 26 13 13 0 0 0 0 26" fill="#fff"/></svg></div>
+    <div class="h-main">
+      <h1>卜卦选股</h1>
+      <div class="h-sub">一卦定股 · 再卦定时 · 三面定夺</div>
+    </div>
+    <div class="h-tag">不构成投资建议</div>
+  </header>
+
+  <div class="bar" id="mktBar"></div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-t="pick">卜 卦 选 股</button>
+    <button class="tab" data-t="one">个 股 起 卦</button>
+  </div>
+
+  <!-- ========== 功能一：卜卦选股 ========== -->
+  <div class="pane on" id="pane-pick">
+    <div class="card hero">
+      <div class="orn">☰ ☱ ☲ ☳</div>
+      <div style="margin:14px 0 6px"><button class="btn-big" id="btnPick">卜 卦 选 股</button></div>
+      <div class="hint">报数起卦：每次点击随机报一数，以报数在吉卦榜上定位，从该位起取三只（卦象互不相同）<br>选中一只后点「诊断这只」，进入个股起卦看完整判断</div>
+    </div>
+
+    <div id="pickResult" style="display:none">
+      <div class="card">
+        <div class="step-h"><span class="no">壹</span><h2>卦象最优三只</h2><span class="tip" id="pickMeta"></span></div>
+        <div class="cands" id="cands"></div>
+        <div class="actions"><button class="ghost" id="btnAgain">重新起卦</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 功能二：个股起卦 ========== -->
+  <div class="pane" id="pane-one">
+    <div class="card">
+      <div class="form">
+        <div class="field">
+          <label>股票代码 / 名称</label>
+          <div class="sbox">
+            <input id="code" placeholder="002303 或 美盈森" autocomplete="off">
+            <div class="sug" id="sug"></div>
+          </div>
+        </div>
+        <button id="btnOne">起 卦</button>
+        <button class="ghost" id="btnRand">随手一只</button>
+      </div>
+      <div id="out"></div>
+    </div>
+  </div>
+
+  <footer>
+    数据：腾讯行情（实时价）· 东方财富公告 · 本地日K因子<br>
+    <a href="xuanxue.html" id="oldLink">玄学全量选股（旧版）</a> ·
+    <span style="opacity:.7">卦定象，时不待人</span>
+  </footer>
+</div>
+
+<script id="engine-script">
+/*__ENGINE__*/
+</script>
+
+<script>
+/* ================= 技术面因子（本地） ================= */
+const ROWS = DATA.rows;
+const FR = ROWS.map(a => ({ code: a[0], name: a[1], py: a[2], vol: a[3], rev: a[4], vshr: a[5], amt: a[6] }));
+const FMAP = new Map(FR.map(r => [r.code, r]));
+const median = a => { const s = [...a].sort((x, y) => x - y), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+const madClamp = vals => { const m = median(vals), md = median(vals.map(v => Math.abs(v - m))) * 1.4826 || 1e-9; return vals.map(v => Math.max(m - 3 * md, Math.min(m + 3 * md, v))); };
+const zs = vals => { const n = vals.length, mu = vals.reduce((a, b) => a + b, 0) / n; const sd = Math.sqrt(vals.reduce((a, b) => a + (b - mu) ** 2, 0) / n) || 1e-9; return vals.map(v => (v - mu) / sd); };
+const RAW = { lowvol: r => -r.vol, rev: r => -r.rev, vshr: r => -r.vshr };
+const KEYS = Object.keys(RAW);
+KEYS.forEach(k => { const v = madClamp(FR.map(RAW[k])); FR.forEach((r, i) => r['c_' + k] = v[i]); });
+const ord = [...FR].sort((a, b) => a.amt - b.amt);
+for (let g = 0; g < 5; g++) {
+  const part = ord.slice(Math.floor(g * FR.length / 5), Math.floor((g + 1) * FR.length / 5));
+  KEYS.forEach(k => { const z = zs(part.map(r => r['c_' + k])); part.forEach((r, i) => r['z_' + k] = z[i]); });
+}
+FR.forEach(r => { KEYS.forEach(k => { if (r['z_' + k] == null) r['z_' + k] = 0; }); r.score = (r.z_lowvol + r.z_rev + r.z_vshr) / 3; });
+const SORTED = [...FR].sort((a, b) => a.score - b.score);
+SORTED.forEach((r, i) => { r.tier = Math.min(10, Math.floor(i / FR.length * 10) + 1); r.rank = i + 1; });
+
+/* ================= 行情（三通道） ================= */
+const gbk = new TextDecoder('gbk');
+const qPrefix = c => (/^(43|83|87|88|92)/.test(c) ? 'bj' : c[0] === '6' ? 'sh' : 'sz');
+function qParse(p) {
+  if (!p || p.length < 45 || !+p[3]) return null;
+  const ts = String(p[30] || ''); const hm = /^\d{14}$/.test(ts) ? ts.slice(8, 10) + ':' + ts.slice(10, 12) : '';
+  return { name: p[1].replace(/\s/g, ''), price: +p[3], prevClose: +p[4], chg: +p[32], hi: +p[33], lo: +p[34], amount: +p[37], time: hm };
+}
+async function ifzqQuote(q) {
+  try {
+    const r = await fetch('https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=' + q + '&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return null; const j = await r.json();
+    const node = j && j.data && j.data[q]; return qParse(node && node.qt && node.qt[q]);
+  } catch (e) { return null; }
+}
+function scriptQuote(q) {
+  return new Promise(resolve => {
+    const v = 'v_' + q, el = document.createElement('script');
+    el.charset = 'gbk'; el.src = 'https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now();
+    let done = false;
+    const fin = x => { if (done) return; done = true; clearTimeout(t); try { el.remove(); } catch (e) {} try { delete window[v]; } catch (e) { window[v] = undefined; } resolve(x); };
+    const t = setTimeout(() => fin(null), 5000);
+    el.onload = () => { const raw = window[v]; fin(typeof raw === 'string' ? qParse(raw.split('~')) : null); };
+    el.onerror = () => fin(null);
+    document.head.appendChild(el);
+  });
+}
+/* 备用厂商：东方财富 push2（与腾讯完全独立的域名，插件一般不会一起拦） */
+async function emQuote(code) {
+  const secid = (code[0] === '6' ? '1.' : '0.') + code;
+  try {
+    const r = await fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=' + secid +
+      '&fields=f43,f44,f45,f46,f47,f48,f58,f59,f60,f86,f169,f170&ut=fa5fd1943c7b386f172d6893dbfba10b&_t=' + Date.now(),
+      { cache: 'no-store' });
+    if (!r.ok) return null;
+    const j = await r.json(); const d = j && j.data;
+    if (!d || !d.f43) return null;
+    const p = Math.pow(10, d.f59 || 2);
+    let hm = '';
+    if (d.f86) { const t = new Date(d.f86 * 1000); hm = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0'); }
+    return { name: d.f58, price: d.f43 / p, prevClose: d.f60 / p, chg: d.f170 / 100, hi: d.f44 / p, lo: d.f45 / p, amount: d.f48 / 1e4, time: hm, src: '东财' };
+  } catch (e) { return null; }
+}
+const QMAP = new Map();        // 会话内缓存，避免重复请求被限流
+async function getQuote(code) {
+  if (QMAP.has(code)) return QMAP.get(code);
+  const q = qPrefix(code) + code;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch('https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now(), { cache: 'no-store' });
+      if (r.ok) { const t = gbk.decode(await r.arrayBuffer()); const m = t.match(/="([^"]+)"/); const x = m && qParse(m[1].split('~')); if (x) { QMAP.set(code, x); return x; } }
+    } catch (e) {}
+    const xe = await emQuote(code);
+    if (xe) { QMAP.set(code, xe); return xe; }
+    const x2 = await ifzqQuote(q);
+    if (x2) { QMAP.set(code, x2); return x2; }
+    const x3 = await scriptQuote(q);
+    if (x3) { QMAP.set(code, x3); return x3; }
+    await new Promise(r => setTimeout(r, 350 * (attempt + 1)));
+  }
+  return null;
+}
+/* ================= 公告 ================= */
+const GOOD = ['增持', '回购', '中标', '预增', '扭亏', '签订', '合作', '获批', '分红', '股权激励', '重大合同'];
+const BAD = ['减持', '质押', '诉讼', '仲裁', '问询', '立案', '处罚', '退市', '预亏', '亏损', '终止', '违规', '冻结', '商誉', '风险提示'];
+async function getNews(code) {
+  /* 东财会拒绝带外站 Referer 的请求（curl 带 Referer 直接 567），必须 no-referrer */
+  const u = `https://np-anotice-stock.eastmoney.com/api/security/ann?sr=-1&page_size=6&page_index=1&ann_type=A&client_source=web&stock_list=${code}&_t=${Date.now()}`;
+  for (let i = 0; i < 2; i++) {
+    try {
+      const r = await fetch(u, { cache: 'no-store', referrerPolicy: 'no-referrer', credentials: 'omit' });
+      if (!r.ok) continue;
+      const j = await r.json();
+      return ((j && j.data && j.data.list) || []).map(it => {
+        const title = it.title_ch || it.title || '';
+        const date = (it.notice_date || it.display_time || '').slice(5, 10);
+        let tone = 0;
+        if (BAD.some(k => title.includes(k))) tone = -1; else if (GOOD.some(k => title.includes(k))) tone = 1;
+        return { title, date, tone };
+      });
+    } catch (e) { await new Promise(r => setTimeout(r, 300)); }
+  }
+  return null;
+}
+
+/* ================= 渲染工具 ================= */
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 2) => (+v).toFixed(d);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const gradeCls = g => g === '大吉' ? 'b1' : g === '吉' ? 'b2' : g === '平' ? 'b3' : g === '谨慎' ? 'b4' : 'b5';
+
+function guaSvgHtml(z, w) {
+  const bits = z.key.split('').map(Number);
+  const seg = (yang, mov) => yang
+    ? `<div style="height:6px;border-radius:1px;background:${mov ? 'var(--red)' : 'var(--ink)'};opacity:${mov ? 1 : .8}"></div>`
+    : `<div style="display:flex;gap:3px"><div style="flex:1;height:6px;border-radius:1px;background:${mov ? 'var(--red)' : 'var(--ink)'};opacity:${mov ? 1 : .8}"></div><div style="flex:1;height:6px;border-radius:1px;background:${mov ? 'var(--red)' : 'var(--ink)'};opacity:${mov ? 1 : .8}"></div></div>`;
+  let h = `<div style="display:flex;flex-direction:column;gap:3.5px;width:${w || 62}px;flex:0 0 auto">`;
+  for (let i = 6; i >= 1; i--) h += seg(bits[i - 1] === 1, z.moving === i);
+  return h + '</div>';
+}
+
+function renderMkt() {
+  const info = Xuan.nowInfo(new Date());
+  const shi = Xuan.timeGua(info);
+  const sc = Math.max(1, Math.min(100, shi.base));
+  const weak = sc < 50;
+  $('#mktBar').innerHTML = `
+    <div><span class="k">天时</span><span class="pill">${shi.gua.label} ${shi.yaoName}爻动</span><b style="margin-left:6px;color:${weak ? 'var(--green)' : 'var(--red)'}">${sc.toFixed(0)}分</b></div>
+    <div><span class="k">四柱</span><b>${info.yearGz} ${info.monthGz} ${info.dayGz} ${info.hourGz}</b></div>
+    <div><span class="k">因子数据</span><b>${DATA.meta.asOf}</b></div>
+    <div><span class="k">仓位上限</span><b style="color:${weak ? 'var(--green)' : 'var(--red)'}">${weak ? '≤2 成' : '可正常'}</b></div>`;
+}
+
+/* ================= 第一卦：全市场选三只 ================= */
+let picks = [];
+function pickThree(bao) {
+  const now = new Date();
+  const info = Xuan.nowInfo(now);
+  const pre = { info, shi: Xuan.timeGua(info) };
+  const rows = [];
+  for (const r of FR) {
+    if (r.amt * 1e8 < 5e7) continue;              // 20日均额 < 5000万，流动性太差
+    const a = Xuan.analyze(r.code, now, 1, { name: r.name, price: 1, prevClose: 1, chg: 0 }, pre, bao);
+    if (a.error) continue;
+    rows.push({ code: r.code, name: r.name, S: a.S, grade: a.grade.t, z: a.zhu, amt: r.amt });
+  }
+  rows.sort((x, y) => y.S - x.S || y.amt - x.amt);
+  /* 吉卦池（S≥66），报数决定起点，从起点向后取三只「卦象互不相同」的 */
+  const pool = rows.filter(r => r.S >= 66 && !Xuan.isBadGua(r.z.gua)).slice(0, 120);   // 取吉卦榜前 120 名（本时辰最低 81 分），兼顾「最优」与「每次不同」
+  if (!pool.length) return { list: [], info, bao, start: 0 };
+  const start = bao % pool.length;
+  const seen = new Set(), out = [];
+  for (let k = 0; k < pool.length && out.length < 3; k++) {
+    const r = pool[(start + k) % pool.length];
+    const key = r.z.gua.label;
+    if (seen.has(key)) continue;
+    seen.add(key); out.push(r);
+  }
+  return { list: out, info, bao, start, poolSize: pool.length };
+}
+
+/* ================= 第二卦：复占（再报一数，另起一卦） ================= */
+function recast(code, price, quote, bao1) {
+  /* 报数差为 24 的倍数时三要素同时归零 → 两次卦象相同，须避开 */
+  let bao2 = 1 + Math.floor(Math.random() * 999);
+  for (let k = 0; k < 10 && bao1 && Math.abs(bao2 - bao1) % 24 === 0; k++) {
+    bao2 = 1 + Math.floor(Math.random() * 999);
+  }
+  const now = new Date();
+  const a = Xuan.analyze(code, now, price, quote, null, bao2);
+  return { bao: bao2, x: a };
+}
+
+/* ================= 综合结论 ================= */
+function judge(q, tech, news, re) {
+  const votes = [];
+  let v1 = q.S >= 66 ? 1 : q.S >= 52 ? 0 : -1;
+  let t1 = `卦气 ${q.S.toFixed(0)} 分（${q.grade}）`;
+  if (Xuan.isBadGua(q.z.gua)) { v1 -= 1; t1 += '，卦名不吉'; }
+  votes.push({ name: '初卦', v: v1, txt: t1 });
+
+  const diff = re.x.S - q.S;
+  const band = v => (v >= 66 ? 1 : v >= 52 ? 0 : -1);      // 吉 / 平 / 弱
+  const g1 = band(q.S), g2 = band(re.x.S);
+  let v4 = g2, note = '';
+  if (g1 * g2 < 0) { v4 = 0; note = '·两次矛盾，不投票'; }   // 一吉一弱 → 存疑
+  else if (diff > 15) note = '·复卦转强';
+  else if (diff < -15) note = '·复卦转弱';
+  else note = g2 === 1 ? '·两次印证' : g2 === 0 ? '·两次皆平' : '·两次皆弱';
+  votes.push({ name: '复占', v: v4, txt: `再报 ${re.bao} → ${re.x.zhu.gua.label} ${re.x.S.toFixed(0)}分（初卦 ${q.S.toFixed(0)}，${diff > 0 ? '+' : ''}${diff.toFixed(0)}）${note}` });
+
+  let v2 = 0, t2 = '无因子数据';
+  if (tech) {
+    v2 = tech.tier === 1 ? -1 : tech.tier === 2 ? 0 : 1;
+    t2 = `第 ${tech.tier} 档 · 全市场 ${tech.rank}/${FR.length}`;
+  }
+  votes.push({ name: '技术', v: v2, txt: t2 });
+
+  let v3 = 0, t3 = '公告获取失败';
+  if (news) {
+    const bad = news.filter(n => n.tone < 0), good = news.filter(n => n.tone > 0);
+    if (bad.length) { v3 = -1; t3 = `${bad.length} 条偏空（${bad[0].title.slice(0, 12)}…）`; }
+    else if (good.length) { v3 = 1; t3 = `${good.length} 条偏多（${good[0].title.slice(0, 12)}…）`; }
+    else t3 = `近 ${news.length} 条公告中性`;
+  }
+  votes.push({ name: '资讯', v: v3, txt: t3 });
+
+  const total = v1 + v4 + v2 + v3;
+  let level, label, badge, cls;
+  if (total >= 2) { level = 'in'; label = '可入场'; badge = 'b-in'; cls = 'v-in'; }
+  else if (total >= 1) { level = 'wait'; label = '轻仓试'; badge = 'b-wait'; cls = 'v-wait'; }
+  else if (total === 0) { level = 'wait'; label = '观望'; badge = 'b-wait'; cls = 'v-wait'; }
+  else { level = 'out'; label = '回避'; badge = 'b-out'; cls = 'v-out'; }
+  return { votes, total, level, label, badge, cls };
+}
+
+/* ================= 流程 ================= */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.t === name));
+  const pp = $('#pane-pick'), po = $('#pane-one');
+  if (pp) pp.classList.toggle('on', name === 'pick');
+  if (po) po.classList.toggle('on', name === 'one');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function doPick() {
+  const btn = $('#btnPick');
+  btn.disabled = true; btn.textContent = '起 卦 中…';
+  await new Promise(r => setTimeout(r, 50));
+  const bao = 1 + Math.floor(Math.random() * 999);
+  const { list, info, start, poolSize } = pickThree(bao);
+  btn.disabled = false; btn.textContent = '卜 卦 选 股';
+  if (!list.length) { alert('本时辰没有满足条件的标的，请稍后再试'); return; }
+
+  picks = list.map(p => ({ ...p, bao }));
+  $('#pickMeta').innerHTML = `报 <b style="color:var(--red)">${bao}</b> → 从吉卦榜第 <b>${start + 1}</b> 位起取（池内 ${poolSize} 只）· ${info.dayGz}日 ${info.hourGz}时`;
+  $('#cands').innerHTML = picks.map((r, i) => `
+    <div class="cand">
+      <div class="idx">第 ${i + 1} 卦</div>
+      <div class="nm">${esc(r.name)}</div>
+      <div class="cd">${r.code}</div>
+      <div class="gua">${guaSvgHtml(r.z, 54)}
+        <div><div class="gn">${r.z.gua.label}</div>
+        <div class="gs">${r.z.yaoName}爻动 → ${r.z.bian.label}<br>体${r.z.ti.n}${r.z.ti.wx} 用${r.z.yong.n}${r.z.yong.wx}</div></div>
+      </div>
+      <div class="sc"><b>${r.S.toFixed(0)}</b><span>分</span><span class="badge ${gradeCls(r.grade)}">${r.grade}</span></div>
+      <button class="mini" data-i="${i}">诊断这只 →</button>
+    </div>`).join('');
+  $('#cands').querySelectorAll('.mini').forEach(b2 => b2.onclick = () => diagOne(+b2.dataset.i));
+  $('#pickResult').style.display = 'block';
+  $('#pickResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function diagOne(i) {
+  const r = picks[i];
+  if (!r) return;
+  switchTab('one');
+  $('#code').value = r.code;
+  doDeep([r]);
+}
+
+async function doDeep(items, manual) {
+  const bao = (items[0] && items[0].bao) || 0;
+  const now = new Date();
+  const info = Xuan.nowInfo(now);
+  $('#out').style.display = 'block';
+  $('#out').innerHTML = `<div class="muted" style="margin-top:14px">取价、查公告、复占中…</div>`;
+
+  const out = [];
+  for (const c of items) {
+    let quote = await getQuote(c.code);
+    if (!quote && manual && manual[c.code]) {
+      quote = { name: c.name, price: manual[c.code], prevClose: manual[c.code], chg: 0, hi: manual[c.code], lo: manual[c.code], time: '手动' };
+    }
+    const news = await getNews(c.code);
+    const price = quote ? quote.price : null;
+    const tech = FMAP.get(c.code) || null;
+    const mk = Math.max(1, Math.min(100, Xuan.timeGua(Xuan.nowInfo(now)).base));
+    const xuan = price ? Xuan.analyze(c.code, now, price, quote, null, c.bao, { tech, mkScore: mk }) : null;
+    const re = xuan ? recast(c.code, price, quote, c.bao) : null;
+    const res = (xuan && re) ? judge({ ...c, S: xuan.S, grade: xuan.grade.t, z: xuan.zhu }, tech, news, re) : null;
+    out.push({ c, quote, news, xuan, tech, re, res });
+  }
+
+  const head = `<div class="muted" style="font-size:11.5px;margin:16px 0 12px">初卦报 <b>${bao}</b> · 复占另报一数 · ${info.dayGz}日 ${info.hourGz}时</div>`;
+
+  $('#out').innerHTML = head + out.map(({ c, quote, news, xuan, tech, re, res }) => {
+    if (!quote || !xuan) return `<div class="detail">
+      <div class="dh"><span class="nm">${esc(c.name)}</span><span class="cd">${c.code}</span><span class="muted">行情取不到</span></div>
+      <div class="note" style="margin-top:0">实时行情几个通道都没响应（多是浏览器插件拦了 qt.gtimg.cn / push2.eastmoney.com，或被限流）。<br>可直接填一个现价继续算：</div>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+        <input id="mp_${c.code}" placeholder="输入现价，如 5.64" style="max-width:180px">
+        <button onclick="useManual('${c.code}')">用此价计算</button>
+      </div></div>`;
+
+    const ud = quote.chg > 0 ? 'up' : quote.chg < 0 ? 'down' : '';
+    const atr = xuan.pts.atr;
+    const R2 = v => Math.round(v * 100) / 100;
+    const upCap = xuan.limitUp || Infinity;
+    let sell1 = Math.min(upCap, R2(quote.price + atr * 0.35));
+    let sell2 = Math.min(upCap, R2(quote.price + atr * 0.75));
+    let cut = R2(quote.price - atr * 0.9);
+    if (sell1 <= quote.price) sell1 = Math.min(upCap, R2(quote.price + 0.01));
+    if (sell2 <= sell1) sell2 = Math.min(upCap, R2(sell1 + 0.01));
+    if (cut >= quote.price) cut = R2(quote.price - 0.01);
+    const isBuy = (res.level === 'in' || res.total >= 1);
+    const weakStock = xuan.zhu.rel === 'yongketi' || xuan.S < 52;
+    const sellHourTxt = weakStock ? '早盘 09:30–10:30（弱股多低开冲高，反弹即卖）' : xuan.hour.name + ' ' + xuan.hour.span;
+
+    const newsHtml = news && news.length
+      ? `<ul class="news">${news.slice(0, 5).map(n => `<li><span class="d">${esc(n.date)}</span><span class="tt">${esc(n.title.replace(/^\S+?:/, ''))}</span>${n.tone ? `<span class="tagx ${n.tone > 0 ? 't-good' : 't-bad'}">${n.tone > 0 ? '偏多' : '偏空'}</span>` : ''}</li>`).join('')}</ul>`
+      : `<div class="muted" style="font-size:12.5px">${news === null ? '公告获取失败（可稍后重试）' : '近 30 日无公告'}</div>`;
+
+    const techHtml = tech
+      ? `<div class="big">第 ${tech.tier} 档</div><div class="muted" style="font-size:11px;margin-top:2px">全市场 ${tech.rank}/${FR.length} 名</div>
+         <div class="kv"><div class="k">60日波动</div><div>${fmt(tech.vol)}%</div>
+         <div class="k">20日涨幅</div><div class="${tech.rev > 0 ? 'up' : 'down'}">${tech.rev > 0 ? '+' : ''}${fmt(tech.rev, 1)}%</div>
+         <div class="k">缩量比</div><div>${fmt(tech.vshr)}</div></div>`
+      : `<div class="muted" style="font-size:12.5px;line-height:1.8">该股不在技术面覆盖范围内<br>（仅沪深主板、且需 70 根以上K线）</div>`;
+
+    return `<div class="detail">
+      <div class="dh">
+        <span class="nm">${esc(quote.name)}</span><span class="cd">${c.code}</span>
+        <span class="px ${ud}">¥${fmt(quote.price)}</span>
+        <span class="${ud}" style="font-size:13px">${quote.chg > 0 ? '+' : ''}${fmt(quote.chg)}%</span>
+        <span class="src">${quote.src ? quote.src + ' ' : '实时 '}${quote.time || ''}</span>
+        <span class="src" style="${Xuan.boardOf(c.code) !== '主板' ? 'color:var(--red)' : ''}">${Xuan.boardOf(c.code)}${Xuan.boardOf(c.code) !== '主板' ? ' · 无交易权限' : ''}</span>
+      </div>
+      <div class="dgrid">
+        <div class="pnl"><div class="t">初卦（报 ${c.bao || bao}）</div>
+          <div style="display:flex;gap:10px">${guaSvgHtml(xuan.zhu, 50)}
+            <div><div class="big">${xuan.zhu.gua.label}</div>
+            <div class="muted" style="font-size:11px">${xuan.zhu.yaoName}动 → ${xuan.zhu.bian.label}</div>
+            <div class="muted" style="font-size:11px">体${xuan.zhu.ti.n}${xuan.zhu.ti.wx} 用${xuan.zhu.yong.n}${xuan.zhu.yong.wx}</div></div>
+          </div>
+          <div class="q">「${esc(xuan.zhu.yaoText)}」</div>
+          <div class="muted" style="font-size:11px;margin-top:5px">${xuan.S.toFixed(0)} 分 · ${xuan.grade.t}</div>
+        </div>
+        <div class="pnl"><div class="t">复卦（再报 ${re.bao}）</div>
+          <div style="display:flex;gap:10px">${guaSvgHtml(re.x.zhu, 50)}
+            <div><div class="big">${re.x.zhu.gua.label}</div>
+            <div class="muted" style="font-size:11px">${re.x.zhu.yaoName}动 → ${re.x.zhu.bian.label}</div>
+            <div class="muted" style="font-size:11px">体${re.x.zhu.ti.n}${re.x.zhu.ti.wx} 用${re.x.zhu.yong.n}${re.x.zhu.yong.wx}</div></div>
+          </div>
+          <div class="q">「${esc(re.x.zhu.yaoText)}」</div>
+          <div class="muted" style="font-size:11px;margin-top:5px">${re.x.S.toFixed(0)} 分 · ${re.x.grade.t} ｜ 与初卦 ${(re.x.S - xuan.S) > 0 ? '+' : ''}${(re.x.S - xuan.S).toFixed(0)}</div>
+        </div>
+        <div class="pnl"><div class="t">技术面</div>${techHtml}</div>
+      </div>
+      <div class="pnl" style="margin-top:12px"><div class="t">资讯面</div>${newsHtml}</div>
+      <div class="verdict ${res.cls}">
+        <div class="vt"><span class="bg-badge ${res.badge}">${res.label}</span>
+          <span class="muted" style="font-size:12px">合计 ${res.total > 0 ? '+' : ''}${res.total} 票</span>
+          <span class="vote">${res.votes.map(v => `<span>${v.name} ${v.v > 0 ? '＋' : v.v < 0 ? '－' : '○'}</span>`).join('')}</span>
+        </div>
+        <div class="reason">${res.votes.map(v => `<div>${v.name}：<b>${v.txt}</b></div>`).join('')}
+          <div style="margin-top:7px">${res.level === 'in' ? `${res.votes.filter(v => v.v > 0).length} 面支持、${res.votes.filter(v => v.v < 0).length} 面反对，可按点位分批；破止损即走。`
+            : res.total >= 1 ? '有一面支持但未共振，<b>只可轻仓试探</b>，等回踩买一。'
+            : res.total === 0 ? '多空互抵，<b>最该等</b>：不追、不补。'
+            : '多数偏空，<b>不建议介入</b>；持仓逢反弹减。'}</div>
+        </div>
+        ${isBuy ? `
+        <div class="muted" style="font-size:11.5px;letter-spacing:1px;margin-top:12px">买入方案（入场 → 退出）</div>
+        <div class="pts">
+          <div class="pt"><div class="l">买入时辰</div><div class="n" style="font-size:15px">${xuan.hour.name}</div><div class="l" style="margin-top:2px">${xuan.hour.span}</div></div>
+          <div class="pt"><div class="l">买入价（买一）</div><div class="n up">¥${fmt(xuan.pts.b1)}</div><div class="l" style="margin-top:2px">低于现价 ${((1 - xuan.pts.b1 / quote.price) * 100).toFixed(2)}%</div></div>
+          <div class="pt"><div class="l">加仓价（买二）</div><div class="n up">¥${fmt(xuan.pts.b2)}</div><div class="l" style="margin-top:2px">到了才加，不追</div></div>
+          <div class="pt"><div class="l">止盈（目标一）</div><div class="n" style="color:var(--gold)">¥${fmt(xuan.pts.t1)}</div><div class="l" style="margin-top:2px">到价减半</div></div>
+          <div class="pt"><div class="l">止损（退出底线）</div><div class="n down">¥${fmt(xuan.pts.stop)}</div><div class="l" style="margin-top:2px">收盘破则清</div></div>
+        </div>
+        <div class="note" style="margin-top:10px"><b>怎么执行：</b>${xuan.hour.name}（${xuan.hour.span}）挂 <b>¥${fmt(xuan.pts.b1)}</b> 买入；跌到 <b>¥${fmt(xuan.pts.b2)}</b> 补一份；到 <b>¥${fmt(xuan.pts.t1)}</b> 减半止盈；收盘跌破 <b>¥${fmt(xuan.pts.stop)}</b> 全清。</div>
+        <div class="muted" style="font-size:11px;margin-top:6px;line-height:1.7">价位以该股日均波动 ¥${fmt(atr)}（≈${(xuan.pts.vol * 100).toFixed(2)}%）为标尺折算：波动大的股区间宽、波动小的窄；卦气弱则等更深，天时弱则目标压缩。</div>
+        ` : `
+        <div class="muted" style="font-size:11.5px;letter-spacing:1px;margin-top:12px">${res.total === 0 ? '观望 · 不建议新进（持仓者可参考减仓价）' : '减仓方案（卖出）— 不建议新进'}</div>
+        <div class="pts">
+          <div class="pt"><div class="l">卖出时辰</div><div class="n" style="font-size:15px">${weakStock ? '早盘' : xuan.hour.name}</div><div class="l" style="margin-top:2px">${sellHourTxt}</div></div>
+          <div class="pt"><div class="l">减仓价①（反弹第一档）</div><div class="n" style="color:var(--gold)">¥${fmt(sell1)}</div><div class="l" style="margin-top:2px">高于现价 ${((sell1 / quote.price - 1) * 100).toFixed(2)}%</div></div>
+          <div class="pt"><div class="l">减仓价②（反弹第二档）</div><div class="n" style="color:var(--gold)">¥${fmt(sell2)}</div><div class="l" style="margin-top:2px">到价再减</div></div>
+          <div class="pt"><div class="l">破位清仓</div><div class="n down">¥${fmt(cut)}</div><div class="l" style="margin-top:2px">跌破不留</div></div>
+        </div>
+        <div class="note" style="margin-top:10px"><b>怎么执行：</b>${weakStock ? '早盘 09:30–10:30' : xuan.hour.name + '（' + xuan.hour.span + '）'}反弹到 <b>¥${fmt(sell1)}</b> 减一半；到 <b>¥${fmt(sell2)}</b> 再减；跌破 <b>¥${fmt(cut)}</b> 全部清掉，不要补仓摊薄。</div>
+        <div class="muted" style="font-size:11px;margin-top:6px;line-height:1.7">减仓价＝现价 + 0.35/0.75×日均波动（¥${fmt(atr)}）；破位价＝现价 − 0.9×日均波动。${weakStock ? '该股体卦受克或卦气偏弱，弱股反弹多半在早盘，尾盘易走弱。' : ''}</div>
+        `}
+        <div class="note" style="margin-top:10px">${isBuy
+          ? `仓位上限 <b>${xuan.posMax === 0 ? '空仓' : xuan.posMax < 1 ? '半成' : '≤ ' + xuan.posMax + ' 成'}</b>${xuan.posCapped ? '（天时压制）' : ''} · 次日涨停 ¥${xuan.limitUp || '—'}`
+          : res.total === 0
+            ? `本结论为<b>观望</b>，不建议新进；持仓者可参考上方减仓价。次日涨停 ¥${xuan.limitUp || '—'}`
+            : `本结论为<b>减仓</b>，仓位上限不适用；按上方减仓价执行。次日涨停 ¥${xuan.limitUp || '—'}`} · 因子截至 ${DATA.meta.asOf}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================= 搜索 ================= */
+const norm = v => String(v || '').replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[\s·]/g, '').toLowerCase();
+function search(q) {
+  const nq = norm(q); if (!nq) return [];
+  const out = [];
+  for (const r of FR) {
+    const nm = norm(r.name);
+    let s = -1;
+    if (r.code === nq) s = 99; else if (nm === nq) s = 90;
+    else if (nm.startsWith(nq)) s = 80 - nm.length;
+    else if (nm.includes(nq)) s = 60 - nm.indexOf(nq) * 3;
+    else if (r.py && r.py.startsWith(nq)) s = 50;
+    else if (/^\d+$/.test(nq) && r.code.startsWith(nq)) s = 40;
+    if (s >= 0) out.push({ r, s });
+  }
+  out.sort((a, b) => b.s - a.s);
+  return out.slice(0, 8).map(o => o.r);
+}
+const inp = $('#code'), sug = $('#sug');
+let list = [], idx = -1;
+function paint() {
+  if (!list.length) { sug.classList.remove('on'); sug.innerHTML = ''; return; }
+  sug.innerHTML = list.map((r, i) => `<div data-i="${i}" class="${i === idx ? 'act' : ''}">${esc(r.name)}<span>${r.code}</span></div>`).join('');
+  sug.classList.add('on');
+  sug.querySelectorAll('div[data-i]').forEach(d => d.onclick = () => pickIt(+d.dataset.i));
+}
+function pickIt(i) { const r = list[i]; if (!r) return; inp.value = r.code; sug.classList.remove('on'); idx = -1; list = []; oneStock(r.code); }
+inp.addEventListener('input', () => {
+  idx = -1; const q = inp.value.trim();
+  if (!q) { list = []; sug.classList.remove('on'); return; }
+  if (/^\d{6}$/.test(q)) { list = []; sug.classList.remove('on'); return; }
+  list = search(q);
+  if (!list.length) { sug.innerHTML = '<div class="empty">未找到（仅覆盖沪深主板）</div>'; sug.classList.add('on'); return; }
+  paint();
+});
+inp.addEventListener('keydown', e => {
+  const open = sug.classList.contains('on') && list.length;
+  if (e.key === 'ArrowDown' && open) { e.preventDefault(); idx = (idx + 1) % list.length; paint(); }
+  else if (e.key === 'ArrowUp' && open) { e.preventDefault(); idx = (idx - 1 + list.length) % list.length; paint(); }
+  else if (e.key === 'Enter') {
+    if (idx >= 0 && list.length) pickIt(idx);
+    else { const h = search(inp.value)[0]; if (h) { inp.value = h.code; oneStock(h.code); } else if (/^\d{6}$/.test(inp.value.trim())) oneStock(inp.value.trim()); }
+  } else if (e.key === 'Escape') { sug.classList.remove('on'); idx = -1; }
+});
+document.addEventListener('click', e => { if (!e.target.closest('.sbox')) sug.classList.remove('on'); });
+
+/* 直接算一只：走同一流程 */
+async function oneStock(code) {
+  switchTab('one');
+  const now = new Date();
+  const bao0 = 1 + Math.floor(Math.random() * 999);
+  const x = Xuan.analyze(code, now, 1, { name: code, price: 1, prevClose: 1, chg: 0 }, null, bao0);
+  if (x.error) { alert('代码无效或取不到行情'); return; }
+  const r = FR.find(f => f.code === code);
+  picks = [{ code, name: r ? r.name : x.name || code, S: x.S, grade: x.grade.t, z: x.zhu, amt: r ? r.amt : 0, bao: bao0 }];
+  await doDeep(picks);
+}
+
+$('#btnPick').onclick = doPick;
+$('#btnAgain').onclick = doPick;
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => switchTab(t.dataset.t));
+$('#btnOne').onclick = () => {
+  const v = inp.value.trim();
+  const h = search(v)[0];
+  if (h) oneStock(h.code); else if (/^\d{6}$/.test(v)) oneStock(v);
+};
+
+(function () {
+  renderMkt();
+  const a = document.getElementById('oldLink');
+  if (a && location.search) a.href += location.search;
+})();
+</script>
+</body>
+</html>

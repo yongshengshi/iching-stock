@@ -1,0 +1,15 @@
+{
+  "name": "iching-stock",
+  "version": "1.0.0",
+  "description": "以梅花易数起卦为核心，结合技术面因子与公告资讯的 A 股个股诊断工具（传统文化研究，不构成投资建议）",
+  "private": true,
+  "scripts": {
+    "serve": "python -m http.server 8899",
+    "build": "node _ref/build_pick.js && node _ref/prep_site.js",
+    "test": "node _ref/test_engine.js"
+  },
+  "devDependencies": {
+    "pinyin-pro": "^3.26.0"
+  },
+  "license": "MIT"
+}

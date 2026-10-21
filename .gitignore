@@ -1,0 +1,19 @@
+# 大体积行情缓存（可由脚本重新生成，切勿提交）
+_ref/kline*.json
+_ref/scan_all.json
+
+# 调试截图与临时输出
+_ref/*.png
+_ref/*.txt
+_ref/live*.html
+_ref/m*.txt
+
+# 构建产物（由 node _ref/prep_site.js 生成）
+site/
+
+# 本地环境
+node_modules/
+.workbuddy/
+*.genie
+.DS_Store
+Thumbs.db

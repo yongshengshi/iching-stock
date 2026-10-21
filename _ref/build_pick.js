@@ -1,0 +1,12 @@
+const fs = require('fs');
+const main = fs.readFileSync('app_template.html', 'utf8');
+const engine = main.match(/<script id="engine-script">([\s\S]*?)<\/script>/)[1];
+const D = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+const F = JSON.parse(fs.readFileSync('factor_data.json', 'utf8'));
+const pyMap = {}; D.list.forEach(r => { pyMap[r[0]] = r[5] || ''; });
+const rows = F.list.map(r => [r[0], r[1], pyMap[r[0]] || '', r[4], r[5], r[6], r[7]]);
+const DATA = { meta: Object.assign({}, D.meta, { asOf: F.meta.asOf, count: rows.length }), lunarYears: D.lunarYears, jieqi: D.jieqi, gua: D.gua, norm: D.norm, list: [], rows };
+const tpl = fs.readFileSync('pick_page.html', 'utf8');
+const out = tpl.replace('/*__ENGINE__*/', engine.split('/*__DATA__*/').join(JSON.stringify(DATA)));
+fs.writeFileSync('../卜卦选股.html', out);
+console.log('size', (Buffer.byteLength(out) / 1024).toFixed(0) + 'KB');

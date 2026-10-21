@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>周易玄学选股 · 梅花易数</title>
+<meta name="description" content="以当下时空起卦，对沪深主板 3000+ 只个股取本卦、互卦、变卦与体用五行，给出卦气评分与买卖点位。传统文化研究，不构成投资建议。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="周易玄学选股 · 梅花易数">
+<meta property="og:description" content="按当下时空起卦，为沪深主板全量标的评分并给出买卖点位 · 传统文化研究，非投资建议">
+<meta property="og:image" content="https://xuanxue-stock.app.workbuddy.host/og.png?sharecode=OYYVCCG5LE">
+<meta name="theme-color" content="#f7f2e7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='47' fill='%23fffdf7' stroke='%23241f1a' stroke-width='4'/%3E%3Cpath d='M50 3a47 47 0 0 1 0 94 23.5 23.5 0 0 1 0-47 23.5 23.5 0 0 0 0-47z' fill='%23241f1a'/%3E%3Ccircle cx='50' cy='26.5' r='7' fill='%23fffdf7'/%3E%3Ccircle cx='50' cy='73.5' r='7' fill='%23241f1a'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#f7f2e7; --panel:#fffdf7; --panel2:#fbf6ea;
+  --ink:#241f1a; --ink2:#5f5749; --ink3:#8b8172;
+  --line:#e3d8c2; --red:#b3341f; --red2:#d94a2b; --green:#1a7a5c; --gold:#a9812f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #fffdf6 0%, rgba(255,253,246,0) 60%),
+    radial-gradient(900px 500px at 100% 0%, #f3ead8 0%, rgba(243,234,216,0) 55%),
+    var(--paper);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;z-index:0;
+  background-image:repeating-linear-gradient(0deg,rgba(160,140,100,.04) 0 1px,transparent 1px 4px);
+}
+.wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:26px 20px 90px}
+h1,h2,h3,.serif{font-family:"Songti SC","SimSun","Noto Serif SC",serif}
+/* ---------- header ---------- */
+header{display:flex;align-items:center;gap:18px;padding:8px 0 22px;border-bottom:1px solid var(--line);margin-bottom:26px}
+.taiji{width:74px;height:74px;flex:0 0 auto;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.h-main{flex:1}
+h1{font-size:30px;letter-spacing:6px;font-weight:600;line-height:1.2}
+.h-sub{font-size:12.5px;color:var(--ink3);letter-spacing:2.5px;margin-top:7px}
+.h-tag{font-size:11px;color:var(--red);border:1px solid rgba(179,52,31,.35);border-radius:999px;padding:6px 12px;letter-spacing:1px;white-space:nowrap;background:rgba(179,52,31,.04)}
+/* ---------- now bar ---------- */
+.nowbar{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:22px;font-size:13px}
+.nowbar b{font-weight:600}
+.nowbar .k{color:var(--ink3);font-size:12px;margin-right:6px}
+.nowbar .pill{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;font-family:"Songti SC",serif;letter-spacing:1px}
+/* ---------- section ---------- */
+.sec{margin-bottom:26px}
+.sec-h{display:flex;align-items:baseline;gap:10px;margin:0 0 12px 2px}
+.sec-h .no{width:22px;height:22px;border-radius:4px;background:var(--red);color:#fff;font-size:12px;display:grid;place-items:center;font-family:"Songti SC",serif;flex:0 0 auto;transform:translateY(-1px)}
+.sec-h h2{font-size:19px;letter-spacing:3px;font-weight:600}
+.sec-h .tip{font-size:12px;color:var(--ink3);letter-spacing:.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px -18px rgba(90,70,40,.45);padding:20px}
+/* ---------- market ---------- */
+.market{display:grid;grid-template-columns:210px 1fr 250px;gap:22px}
+@media(max-width:900px){.market{grid-template-columns:1fr}}
+.gua-box{text-align:center}
+.gua-svg{width:132px;height:auto;display:block;margin:0 auto}
+.gua-name{font-family:"Songti SC",serif;font-size:21px;letter-spacing:2px;margin-top:10px;font-weight:600}
+.gua-sub{font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:5px}
+.gua-no{font-size:12px;color:var(--ink3);letter-spacing:3px;margin-top:12px;border-top:1px solid var(--line);padding-top:9px;display:inline-block}
+.txt-block{margin-bottom:14px}
+.txt-block .lbl{font-size:11.5px;color:var(--red);letter-spacing:1.5px;margin-bottom:5px;font-weight:600}
+.txt-block .val{font-family:"Songti SC","SimSun",serif;font-size:15.5px;line-height:1.85;color:#33291f}
+.muted{color:var(--ink3);font-size:12px}
+.chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-top:8px}
+.chain .arrow{color:var(--ink3)}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-family:"Songti SC",serif;font-size:12.5px}
+/* ---------- score ---------- */
+.score-wrap{text-align:center}
+.big-score{font-family:"Songti SC",serif;font-size:54px;line-height:1;font-weight:600;color:var(--red)}
+.big-score small{font-size:14px;color:var(--ink3);letter-spacing:1px}
+.grade{display:inline-block;margin-top:8px;font-family:"Songti SC",serif;font-size:16px;letter-spacing:4px;padding:5px 16px;border-radius:999px;border:1px solid}
+.g-1{color:#fff;background:var(--red);border-color:var(--red)}
+.g-2{color:var(--red);background:rgba(179,52,31,.07);border-color:rgba(179,52,31,.35)}
+.g-3{color:var(--gold);background:rgba(169,129,47,.08);border-color:rgba(169,129,47,.35)}
+.g-4{color:var(--ink2);background:rgba(95,87,73,.06);border-color:rgba(95,87,73,.25)}
+.g-5{color:var(--green);background:rgba(26,122,92,.07);border-color:rgba(26,122,92,.32)}
+.bars{margin-top:16px;text-align:left}
+.bar-row{margin-bottom:9px}
+.bar-row .t{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink2);margin-bottom:4px}
+.bar{height:6px;background:#efe6d4;border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#d9b04a,#b3341f);width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+/* ---------- inputs ---------- */
+.form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11.5px;color:var(--ink3);letter-spacing:1px}
+input,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 13px;outline:none;transition:.2s}
+input:focus,textarea:focus{border-color:rgba(179,52,31,.5);background:#fff;box-shadow:0 0 0 3px rgba(179,52,31,.06)}
+#stockCode{width:196px;letter-spacing:2px;font-family:"Songti SC",serif;font-size:16px}
+#stockPrice{width:120px}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;padding:11px 22px;font-size:14px;letter-spacing:2px;transition:.18s;color:#fff;background:var(--red)}
+button:hover{background:var(--red2);transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--ink2);border:1px solid var(--line)}
+button.ghost:hover{background:var(--panel2);color:var(--ink);transform:none}
+.quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.quick button{padding:6px 11px;font-size:12px;letter-spacing:.5px;background:var(--panel2);color:var(--ink2);border:1px solid var(--line);border-radius:999px}
+.quick button:hover{background:#fff;color:var(--red);border-color:rgba(179,52,31,.3);transform:none}
+/* ---------- suggest ---------- */
+.sbox{position:relative}
+.sug{position:absolute;top:calc(100% + 6px);left:0;width:268px;max-height:252px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 16px 36px -18px rgba(90,70,40,.55);display:none;z-index:30}
+.sug.on{display:block}
+.sug div[data-i]{padding:8px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-family:"Songti SC",serif}
+.sug div[data-i]:hover{background:var(--panel2)}
+.sug span{color:var(--ink3);font-size:11px;font-family:"SFMono-Regular",Consolas,monospace}
+.sug div.act{background:var(--panel2);box-shadow:inset 3px 0 0 var(--red)}
+.sug .empty{display:block;color:var(--ink3);font-size:12.5px;cursor:default;padding:11px 13px;line-height:1.6}
+.sug .empty b{color:var(--ink2)}
+/* ---------- result ---------- */
+#resultArea{display:none}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.res{grid-template-columns:1fr}}
+.res-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.res-head .nm{font-family:"Songti SC",serif;font-size:22px;letter-spacing:2px;font-weight:600}
+.res-head .cd{font-size:12.5px;color:var(--ink3);letter-spacing:1px}
+.px{font-family:"Songti SC",serif;font-size:19px;font-weight:600}
+.up{color:var(--red)} .down{color:var(--green)}
+.src{font-size:10.5px;color:var(--ink3);border:1px solid var(--line);border-radius:4px;padding:1px 6px;letter-spacing:.5px}
+.kv{display:grid;grid-template-columns:76px 1fr;gap:7px 12px;font-size:13px;margin-top:12px}
+.kv .k{color:var(--ink3);font-size:12px}
+.kv .v{color:var(--ink);line-height:1.6}
+.pts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.pt{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.pt .l{font-size:11px;color:var(--ink3);letter-spacing:.5px;margin-bottom:5px}
+.pt .n{font-family:"Songti SC",serif;font-size:17px;font-weight:600;letter-spacing:.5px}
+.pt.buy{border-left:3px solid var(--red)}
+.pt.stop{border-left:3px solid var(--green)}
+.pt.target{border-left:3px solid var(--gold)}
+.verdict{background:linear-gradient(180deg,#fdf7ea,#fbf2e0);border:1px solid #eadfc6;border-radius:11px;padding:14px 16px;margin-top:16px;font-family:"Songti SC",serif;font-size:14px;line-height:1.95;color:#3b3125}
+.verdict .hl{color:var(--red);font-weight:600}
+/* ---------- batch ---------- */
+#batchResult{display:none;margin-top:18px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:500;font-size:11.5px;color:var(--ink3);letter-spacing:1px;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid #f0e9da;font-family:"Songti SC",serif}
+tbody tr{cursor:pointer;transition:.15s}
+tbody tr:hover{background:#fdf8ec}
+td.num{font-variant-numeric:tabular-nums}
+.rank{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-family:sans-serif;color:#fff;background:#c9bda4}
+.rank.top{background:var(--red)}
+.mini-bar{height:5px;background:#efe6d4;border-radius:3px;width:64px;overflow:hidden;display:inline-block;vertical-align:middle}
+.mini-bar>i{display:block;height:100%;background:linear-gradient(90deg,#d9b04a,#b3341f)}
+/* ---------- method ---------- */
+.method{font-size:13px;line-height:2;color:var(--ink2)}
+.method h3{font-size:14px;color:var(--ink);letter-spacing:2px;margin:14px 0 6px}
+.method code{font-family:"SFMono-Regular",Consolas,monospace;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px;color:var(--red)}
+.method ul{margin-left:18px}
+.method li{margin:3px 0}
+.disclaim{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:13px 16px;font-size:12.5px;line-height:1.9;color:#7a3125;margin-top:14px}
+@media(max-width:600px){
+  header{flex-wrap:wrap;gap:12px}
+  h1{font-size:23px;letter-spacing:3px}
+  .h-sub{letter-spacing:1px}
+  .h-tag{display:none}
+  .wrap{padding:18px 14px 70px}
+  .pts{grid-template-columns:1fr 1fr}
+  .field{flex:1 1 100%}
+  #stockCode{width:100%}
+  #stockPrice{width:100%}
+  .form button{flex:1 1 auto}
+  .res-head .nm{font-size:19px}
+  .sec-h h2{font-size:17px}
+}
+footer{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:34px;line-height:2}
+/* ---------- warn / table wrap ---------- */
+.warn{background:rgba(179,52,31,.08);border:1px solid rgba(179,52,31,.35);color:var(--red);border-radius:6px;padding:3px 8px;font-size:11.5px;letter-spacing:.5px;white-space:nowrap}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.tbl-wrap table{min-width:680px}
+.note-line{font-size:11px;color:var(--ink3);margin-top:6px;line-height:1.7}
+.note-line b{color:var(--red);font-weight:600}
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:#2b241c;color:#fdf7ea;padding:11px 22px;border-radius:999px;font-size:13px;letter-spacing:1px;opacity:0;pointer-events:none;transition:.28s;z-index:99;box-shadow:0 14px 34px -14px rgba(0,0,0,.55);max-width:82vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ---------- anim ---------- */
+.fade{animation:fadeUp .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.draw{stroke-dasharray:100;stroke-dashoffset:100;animation:draw .5s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.shake{animation:shk .3s}
+@keyframes shk{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="taiji" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="47" fill="#fffdf7" stroke="#241f1a" stroke-width="2"/>
+      <path d="M50 3a47 47 0 0 1 0 94 23.5 23.5 0 0 1 0-47 23.5 23.5 0 0 0 0-47z" fill="#241f1a"/>
+      <circle cx="50" cy="26.5" r="7.5" fill="#fffdf7"/>
+      <circle cx="50" cy="73.5" r="7.5" fill="#241f1a"/>
+    </svg>
+    <div class="h-main">
+      <h1>周易玄学选股</h1>
+      <div class="h-sub">梅花易数 · 体用五行 · 卦气定势 · 全部 A 股</div>
+    </div>
+    <div class="h-tag">传统文化研究 · 非投资建议</div>
+  </header>
+
+  <div class="nowbar" id="nowBar"></div>
+
+  <!-- 01 天时 -->
+  <section class="sec">
+    <div class="sec-h"><span class="no">壹</span><h2>今日天时</h2><span class="tip">以当下时空起卦，定大盘气场</span></div>
+    <div class="card market" id="marketCard"></div>
+  </section>
+
+  <!-- 02 个股 -->
+  <section class="sec">
+    <div class="sec-h"><span class="no">贰</span><h2>个股测算</h2><span class="tip">输入代码或名称，取本命、时运、主断三卦</span></div>
+    <div class="card">
+      <div class="form">
+        <div class="field"><label>股票代码 / 名称（全部 A 股）</label>
+          <div class="sbox">
+            <input id="stockCode" maxlength="8" placeholder="600519 或 茅台" autocomplete="off">
+            <div class="sug" id="sugList"></div>
+          </div>
+        </div>
+        <div class="field"><label>现价（留空自动取）</label><input id="stockPrice" placeholder="自动" autocomplete="off"></div>
+        <button id="btnDivine">起 卦 测 算</button>
+        <button class="ghost" id="btnRand">随手一卦</button>
+      </div>
+      <div class="quick" id="quickList"></div>
+      <div id="resultArea"></div>
+    </div>
+  </section>
+
+  <!-- 03 批量 -->
+  <section class="sec" id="scan">
+    <div class="sec-h"><span class="no">叁</span><h2>批量选股</h2><span class="tip">多只标的同坛论卦，按卦气排序</span></div>
+    <div class="card">
+      <div class="field" style="margin-bottom:12px">
+        <label>代码列表（逗号、空格或换行分隔）</label>
+        <textarea id="batchInput" rows="3" placeholder="600519, 000858, 601318, 002594"></textarea>
+      </div>
+      <div class="form" style="margin-bottom:0">
+        <button id="btnBatch">论 卦 排 序</button>
+        <button class="ghost" id="btnScanAll">扫描全部 A 股</button>
+        <button class="ghost" id="btnCSV">导出 CSV</button>
+        <button class="ghost" id="btnReport">导出今日报告</button>
+        <span class="muted">点击任意一行可回填至「个股测算」</span>
+      </div>
+      <div id="batchResult"></div>
+    </div>
+  </section>
+
+  <div class="disclaim" style="margin-top:6px">
+    <b>声明：</b>本工具是对《周易》梅花易数规则的程序化演绎，属传统文化研究与娱乐实验。卦象、评分与点位均为规则生成的符号映射，<b>不具备任何预测效力，不构成投资建议</b>。A 股有风险，实盘决策请依据基本面、资金管理与止损纪律。
+  </div>
+
+  <footer>
+    周易玄学选股 · 梅花易数程序化演绎<br>
+    <span style="opacity:.7">卦以八除，爻以六除，余零取八或六</span>
+  </footer>
+</div>
+
+<script id="engine-script">
+/* ================= 引擎：纯逻辑，无 DOM ================= */
+const DATA = /*__DATA__*/;
+
+/* 全量主板快照：[代码, 名称, 收盘, 涨跌%, 成交额(亿)] */
+const SMAP = {};
+(DATA.list || []).forEach(r => { SMAP[r[0]] = { n: r[1], p: r[2], chg: r[3], amt: r[4], py: r[5] || '' }; });
+const ALL_CODES = (DATA.list || []).map(r => r[0]);
+
+const GAN = '甲乙丙丁戊己庚辛壬癸';
+const ZHI = '子丑寅卯辰巳午未申酉戌亥';
+const XIANG = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+
+/* 八卦：索引按梅花先天数 乾1兑2离3震4巽5坎6艮7坤8 */
+const BAGUA = {
+  1:{n:'乾',sym:'☰',bin:'111',wx:'金',x:'天'},
+  2:{n:'兑',sym:'☱',bin:'110',wx:'金',x:'泽'},
+  3:{n:'离',sym:'☲',bin:'101',wx:'火',x:'火'},
+  4:{n:'震',sym:'☳',bin:'100',wx:'木',x:'雷'},
+  5:{n:'巽',sym:'☴',bin:'011',wx:'木',x:'风'},
+  6:{n:'坎',sym:'☵',bin:'010',wx:'水',x:'水'},
+  7:{n:'艮',sym:'☶',bin:'001',wx:'土',x:'山'},
+  8:{n:'坤',sym:'☷',bin:'000',wx:'土',x:'地'}
+};
+const BIN2IDX = {'111':1,'110':2,'101':3,'100':4,'011':5,'010':6,'001':7,'000':8};
+
+/* 五行 */
+const SHENG = {'金':'水','水':'木','木':'火','火':'土','土':'金'};
+const KE    = {'金':'木','木':'土','土':'水','水':'火','火':'金'};
+function relOf(a, b) { // a 对 b 的关系（a 为体，b 为用）
+  if (a === b) return 'bihe';
+  if (SHENG[a] === b) return 'tishengyong';
+  if (KE[a] === b) return 'tikeyong';
+  if (SHENG[b] === a) return 'yongshengti';
+  return 'yongketi';
+}
+const REL_TXT = {
+  tishengyong:{label:'体生用', desc:'气泄于外，费力而缓', c:40},
+  tikeyong:{label:'体克用', desc:'主动可取，得财有耗', c:82},
+  yongshengti:{label:'用生体', desc:'外势来助，进则有利', c:100},
+  yongketi:{label:'用克体', desc:'受压受制，宜避其锋', c:15},
+  bihe:{label:'体用比和', desc:'不喜不惊，按部就班', c:62}
+};
+
+/* ---------- 历法 ---------- */
+function jdn(y, m, d) {
+  const a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+  return d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4)
+    - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+}
+const OFFSET = DATA.meta.dayOffset;
+
+function lunarOf(date) {
+  const jd = jdn(date.getFullYear(), date.getMonth() + 1, date.getDate());
+  const Y = date.getFullYear();
+  let useY = Y;
+  const startOf = y => {
+    const t = DATA.lunarYears[y];
+    return t ? jdn(t.s[0], t.s[1], t.s[2]) : null;
+  };
+  if (startOf(Y) !== null && jd < startOf(Y)) useY = Y - 1;
+  const tbl = DATA.lunarYears[useY];
+  if (!tbl) return null;
+  let rest = jd - startOf(useY);
+  for (const [m, days] of tbl.m) {
+    if (rest < days) return { y: useY, m: Math.abs(m), d: rest + 1, leap: m < 0 };
+    rest -= days;
+  }
+  return { y: useY, m: 12, d: rest + 1, leap: false };
+}
+
+function dayGzIdx(date) {
+  const jd = jdn(date.getFullYear(), date.getMonth() + 1, date.getDate());
+  return ((jd + OFFSET) % 60 + 60) % 60;
+}
+
+/* 节气：返回该日期所处的「节」序（0=小寒 … 11=大雪），用于定月建 */
+const JIE_IDX = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+const mmddOf = date => (date.getMonth() + 1) * 100 + date.getDate();
+function monthBranchOf(date) {
+  const tbl = DATA.jieqi[date.getFullYear()];
+  if (!tbl) return 0;
+  const mmdd = mmddOf(date);
+  let last = -1;
+  for (const k of JIE_IDX) if (tbl[k] && mmdd >= tbl[k]) last = k;
+  if (last < 0) return 0;                 // 小寒之前：子月（大雪延续）
+  return (last / 2 + 1) % 12;             // 小寒→丑、立春→寅 … 大雪→子
+}
+function yearGzIdx(date) {
+  let y = date.getFullYear();
+  const t = DATA.jieqi[y];
+  if (t && t[2] && mmddOf(date) < t[2]) y -= 1;   // 立春换年
+  return ((y - 4) % 60 + 60) % 60;
+}
+function monthGzIdx(date) {
+  const yg = yearGzIdx(date) % 10;
+  const branch = monthBranchOf(date);
+  const off = (branch - 2 + 12) % 12;
+  return (yg % 5) * 2 + 2 + off; // 月干序号（仅取天干）
+}
+function hourBranchOf(hour) { return Math.floor((((hour + 1) % 24)) / 2); }
+function hourGzStem(dayGz, hour) {
+  return ((dayGz % 10) % 5) * 2 + hourBranchOf(hour);
+}
+
+function nowInfo(date) {
+  const lun = lunarOf(date);
+  const dg = dayGzIdx(date);
+  const yg = yearGzIdx(date);
+  const mg = monthGzIdx(date);
+  const hb = hourBranchOf(date.getHours());
+  const hg = hourGzStem(dg, date.getHours());
+  const mb = monthBranchOf(date);
+  return {
+    date,
+    lunar: lun,
+    yearGz: GAN[yg % 10] + ZHI[yg % 12],
+    monthGz: GAN[((mg % 10) + 10) % 10] + ZHI[mb],
+    dayGz: GAN[dg % 10] + ZHI[dg % 12],
+    hourGz: GAN[((hg % 10) + 10) % 10] + ZHI[hb],
+    yearBranch: (yg % 12) + 1,
+    hourBranch: hb + 1,
+    monthBranch: mb,
+    dayGzIdx: dg
+  };
+}
+
+/* ---------- 卦象 ---------- */
+function hexKey(upperIdx, lowerIdx) { return BAGUA[lowerIdx].bin + BAGUA[upperIdx].bin; }
+function getGua(key) { return DATA.gua[key] || null; }
+function guaLabel(g) {
+  const u = Object.values(BAGUA).find(b => b.n === g.up);
+  const l = Object.values(BAGUA).find(b => b.n === g.lo);
+  if (!u || !l) return g.n;
+  if (g.up === g.lo) return `${g.n === '习坎' ? '坎' : g.n}为${u.x}`;
+  return `${u.x}${l.x}${g.n}`;
+}
+function guaOfKey(key) {
+  const g = getGua(key);
+  if (!g) return null;
+  const loBin = key.slice(0, 3), upBin = key.slice(3, 6);
+  return { key, data: g, loIdx: BIN2IDX[loBin], upIdx: BIN2IDX[upBin], label: guaLabel(g) };
+}
+function mutualKey(key) {
+  const L = key.split('').map(Number);
+  const lo = [L[1], L[2], L[3]].join('');
+  const up = [L[2], L[3], L[4]].join('');
+  return lo + up;
+}
+function changeKey(key, moving) {
+  const L = key.split('');
+  const i = moving - 1;
+  L[i] = L[i] === '1' ? '0' : '1';
+  return L.join('');
+}
+function yaoName(isYang, pos) {
+  const num = ['初', '二', '三', '四', '五', '上'][pos - 1];
+  const yn = isYang ? '九' : '六';
+  if (pos === 1) return '初' + yn;
+  if (pos === 6) return '上' + yn;
+  return yn + num;
+}
+
+/* ---------- 打分 ---------- */
+const NORM = DATA.norm;
+const normG = v => Math.max(0, Math.min(100, (v - NORM.g[0]) / (NORM.g[1] - NORM.g[0]) * 100));
+const normL = v => Math.max(0, Math.min(100, (v - NORM.l[0]) / (NORM.l[1] - NORM.l[0]) * 100));
+
+const STRENGTH = {
+  0:{'木':'相','火':'休','土':'囚','金':'死','水':'旺'},
+  1:{'木':'旺','火':'相','土':'死','金':'囚','水':'休'},
+  2:{'木':'死','火':'旺','土':'相','金':'囚','水':'休'},
+  3:{'木':'囚','火':'死','土':'旺','金':'相','水':'休'},
+  4:{'木':'休','火':'囚','土':'死','金':'旺','水':'相'},
+  5:{'木':'休','火':'囚','土':'死','金':'旺','水':'相'},
+  6:{'木':'死','火':'旺','土':'相','金':'囚','水':'休'},
+  7:{'木':'囚','火':'死','土':'旺','金':'相','水':'休'},
+  8:{'木':'死','火':'旺','土':'相','金':'囚','水':'休'},
+  9:{'木':'囚','火':'死','土':'旺','金':'相','水':'休'},
+  10:{'木':'休','火':'囚','土':'死','金':'旺','水':'相'},
+  11:{'木':'相','火':'休','土':'囚','金':'死','水':'旺'}
+};
+const ST_SCORE = {'旺':100,'相':82,'休':55,'囚':32,'死':12};
+
+function evalGua(key, moving, monthBranch) {
+  const g = guaOfKey(key);
+  const L = key.split('').map(Number);
+  const isYangLine = L[moving - 1] === 1;
+  const tiIdx = moving <= 3 ? g.upIdx : g.loIdx;
+  const yongIdx = moving <= 3 ? g.loIdx : g.upIdx;
+  const ti = BAGUA[tiIdx], yong = BAGUA[yongIdx];
+  const rel = relOf(ti.wx, yong.wx);
+  const st = (STRENGTH[monthBranch] || {})[ti.wx] || '休';
+
+  const A = normG(g.data.gs);
+  const B = normL(g.data.lss[moving - 1]);
+  const C = REL_TXT[rel].c;
+  const D = ST_SCORE[st];
+  const S0 = 0.32 * A + 0.30 * B + 0.23 * C + 0.15 * D;
+
+  const bk = changeKey(key, moving);
+  const bian = guaOfKey(bk);
+  const hk = mutualKey(key);
+  const hu = guaOfKey(hk);
+  const trend = bian ? (bian.data.gs - g.data.gs) : 0;
+
+  return {
+    gua: g, key, moving, isYangLine,
+    yaoName: yaoName(isYangLine, moving),
+    yaoText: g.data.ls[moving - 1],
+    hu, bian, trend,
+    ti, yong, rel, relTxt: REL_TXT[rel], strength: st,
+    subs: { A, B, C, D },
+    base: S0
+  };
+}
+
+/* ---------- 时间起卦 ---------- */
+function timeGua(info) {
+  const lun = info.lunar || { m: 1, d: 1 };
+  const upSum = info.yearBranch + lun.m + lun.d;
+  const up = upSum % 8 || 8;
+  const loSum = upSum + info.hourBranch;
+  const lo = loSum % 8 || 8;
+  const moving = loSum % 6 || 6;
+  return evalGua(hexKey(up, lo), moving, info.monthBranch);
+}
+
+/* ---------- 个股 ---------- */
+/* 全部 A 股：沪 600/601/603/605/688/689，深 000/001/002/003/300/301/302，北 43/83/87/88/92 */
+const BOARD_RE = /^(600|601|603|605|688|689|000|001|002|003|300|301|302|43\d{4}|83\d{4}|87\d{4}|88\d{4}|92\d{4})/;
+function boardOf(code) {
+  if (/^(300|301|302)/.test(code)) return '创业板';
+  if (/^68[89]/.test(code)) return '科创板';
+  if (/^(43|83|87|88|92)/.test(code)) return '北交所';
+  return '主板';
+}
+/* 涨跌幅限制：创业板／科创板 20%，北交所 30%，主板 10% */
+function limitPctOf(code) {
+  const b = boardOf(code);
+  return b === '创业板' || b === '科创板' ? 0.2 : b === '北交所' ? 0.3 : 0.1;
+}
+function checkCode(code) {
+  if (!/^\d{6}$/.test(code)) return '请输入 6 位数字代码';
+  if (!BOARD_RE.test(code)) return '该代码不在 A 股范围（仅收录沪深主板／创业板／科创板／北交所）';
+  return null;
+}
+
+function stockGua(code, info, extra) {
+  const num = +code;                        // 以代码为数字（先天数）
+  const dsTail = code.slice(3).split('').reduce((a, c) => a + (+c), 0);  // 后三位数字和
+  const lun = info.lunar || { m: 1, d: 1 };
+  const timeNum = info.yearBranch + lun.m + lun.d + info.hourBranch;     // 天时之数
+  const ex = extra || 0;                    // 报数（梅花易数：报数起卦）
+  const up = (num + ex * 7) % 8 || 8;              // 上卦：代码之数 + 报数×7
+  const lowerNum = dsTail + timeNum + ex * 3;      // 下卦：数理 + 天时 + 报数×3
+  const lo = lowerNum % 8 || 8;
+  const moving = (num + timeNum + ex * 5) % 6 || 6; // 动爻：+报数×5
+  return evalGua(hexKey(up, lo), moving, info.monthBranch);
+}
+
+function mingGua(code) {
+  const up = code.slice(0, 3).split('').reduce((a, c) => a + (+c), 0) % 8 || 8;
+  const lo = code.slice(3).split('').reduce((a, c) => a + (+c), 0) % 8 || 8;
+  const key = hexKey(up, lo);
+  const g = guaOfKey(key);
+  return { gua: g, key, label: g.label, up: BAGUA[up], lo: BAGUA[lo] };
+}
+
+const XIANG_TRAIT = {
+  '天':'强势外显，量能充沛，易为板块龙头',
+  '泽':'情绪活跃，题材敏感，善借消息腾挪',
+  '火':'波动剧烈，热点附体，来去皆快',
+  '雷':'突发放量，急涨急跌，需防闪崩',
+  '风':'随势而动，跟风补涨，持续性偏弱',
+  '水':'潜行震荡，波段反复，磨人心性',
+  '山':'滞涨抗跌，低位横盘，靠时间换空间',
+  '地':'厚重低波，蓝筹体质，波动收敛'
+};
+
+function gradeOf(S) {
+  if (S >= 78) return { t:'大吉', c:'g-1', i:1, pos:'6–7 成', posNum:6.5, adv:'势旺气顺，可主动出击；回踩即分批介入，破位则立减。' };
+  if (S >= 66) return { t:'吉',   c:'g-2', i:2, pos:'4–5 成', posNum:4.5, adv:'气数向好，分批建仓；不追高，等回落至买一区间。' };
+  if (S >= 52) return { t:'平',   c:'g-3', i:3, pos:'2–3 成', posNum:2.5, adv:'吉凶相半，轻仓试探；以区间低吸高抛为主，不恋战。' };
+  if (S >= 40) return { t:'谨慎', c:'g-4', i:4, pos:'0–1 成', posNum:0.5, adv:'气机偏弱，观望为上；仅超跌短线，且须严设止损。' };
+  return { t:'凶', c:'g-5', i:5, pos:'空仓', posNum:0, adv:'体用受制，不宜介入；持仓者逢反弹减，勿补仓摊薄。' };
+}
+
+/* 天时定仓位上限：大盘卦弱时，个股再吉也不许重仓 */
+function posCapOf(shiScore) {
+  if (shiScore >= 60) return null;
+  if (shiScore >= 50) return 3;
+  if (shiScore >= 40) return 2;
+  return 1;
+}
+
+/* 卦名不吉者：分数受判词影响可能虚高，需人工降级 */
+const BAD_NAMES = ['否', '困', '蹇', '讼', '剥', '明夷', '习坎', '蛊', '睽', '屯', '夬', '大过'];
+const isBadGua = g => !!g && BAD_NAMES.includes(g.data.n);
+
+const TICK = 0.01;
+const r2 = v => Math.round(v * 100) / 100;
+
+/* 点位：以个股波动率(ATR)为基准，再按卦气、爻性、变卦趋势、天时调节
+   price  现价
+   S      卦气分 0-100
+   isYang 动爻是否阳爻（阳动势进，回踩浅）
+   trend  变卦趋势（<0 趋凶）
+   limitUp 次日涨停价
+   volPct 个股60日日均波动率(%)，缺省 2%
+   mkScore 天时评分 0-100，缺省 60                                     */
+function pointsOf(price, S, isYangLine, trend, limitUp, volPct, mkScore) {
+  const k = S / 100;
+  const vol = (volPct && volPct > 0 ? volPct : 2) / 100;
+  const atr = price * vol;                                   // 日均波动额（≈ATR）
+  const yang = isYangLine ? 0.85 : 1.1;                      // 阳动不等深回踩
+  const mk = mkScore == null ? 0.6 : Math.max(0, Math.min(1, mkScore / 100));
+  const mkAdj = 0.85 + 0.3 * mk;                             // 天时弱 → 目标压缩
+  const damp = trend < -0.8 ? 0.75 : 1;                      // 变卦趋凶 → 目标收窄
+  const cap = limitUp && limitUp > 0 ? limitUp : Infinity;
+
+  const gap = 1.4 + (1 - k) * 2.0;                           // 仅用于展示的参考百分比
+
+  /* 回踩深度按 ATR 走：波动大→区间宽；卦气弱→等更深 */
+  let b1 = r2(price - atr * (0.25 + 0.25 * (1 - k)) * yang);
+  let b2 = r2(price - atr * (0.75 + 0.55 * (1 - k)) * yang);
+  let stop = r2(b2 - atr * (0.60 + 0.30 * (1 - k)));
+  const rawT2 = r2(price + atr * (2.0 + 1.6 * k) * damp * mkAdj);
+  let t1 = Math.min(cap, r2(price + atr * (1.2 + 1.3 * k) * damp * mkAdj));
+  let t2 = Math.min(cap, rawT2);
+
+  /* 最小变动价位兜底：低价股四舍五入会粘连，强制拉开 */
+  if (!(stop < b2 && b2 < b1 && b1 < price)) {
+    b1 = r2(price - TICK); b2 = r2(price - 2 * TICK); stop = r2(price - 3 * TICK);
+  }
+  if (b2 >= b1) b2 = r2(b1 - TICK);
+  if (stop >= b2) stop = r2(b2 - TICK);
+  if (t1 <= price) t1 = Math.min(cap, r2(price + TICK));
+  if (t2 <= t1) t2 = Math.min(cap, r2(t1 + TICK));
+
+  return {
+    b1, b2, stop, t1, t2,
+    gap: gap / 100, vol, atr,
+    limitUp: isFinite(cap) ? cap : null,
+    capped: rawT2 > cap + 1e-9,
+    degenerate: stop <= 0 || t2 <= price
+  };
+}
+
+function bestHour(tiWx) {
+  const cands = [
+    { name:'巳时', span:'09:30–11:00', wx:'火' },
+    { name:'午时', span:'11:00–13:00', wx:'火' },
+    { name:'未时', span:'13:00–15:00', wx:'土' }
+  ];
+  const rank = { yongshengti:0, bihe:1, tikeyong:2, tishengyong:3, yongketi:4 };
+  let best = null;
+  for (const c of cands) {
+    const r = relOf(tiWx, c.wx); // 体 vs 时支五行
+    const score = rank[r];
+    if (!best || score < best.score) best = { ...c, rel: r, score };
+  }
+  return best;
+}
+
+function analyze(code, date, priceOverride, quote, pre, extra, ctx) {
+  const info = (pre && pre.info) || nowInfo(date);
+  const shi = (pre && pre.shi) || timeGua(info);
+  const zhu = stockGua(code, info, extra);
+  const ming = mingGua(code);
+  const snap = SMAP[code] || null;
+
+  let price = priceOverride, src = '手动';
+  if (!price && snap) { price = snap.p; src = '快照'; }
+  if (quote && quote.price > 0) { price = quote.price; src = '实时'; }
+  if (!price) return { error: '取不到现价：请手动填写该股现价' };
+
+  /* 次日涨停价：优先用实时昨收，其次由快照涨跌幅反推 */
+  let pc = quote && quote.prevClose > 0 ? quote.prevClose : null;
+  if (!pc && snap && snap.chg != null && snap.chg > -99) pc = snap.p / (1 + snap.chg / 100);
+  const limitUp = pc && pc > 0 ? r2(pc * (1 + limitPctOf(code))) : null;
+
+  /* 天时共振：时运卦内卦（下卦）五行 vs 个股体卦五行 */
+  const shiWx = BAGUA[shi.gua.loIdx].wx;
+  const relReso = relOf(zhu.ti.wx, shiWx);
+  const RESO = { yongshengti:8, tikeyong:5, bihe:3, tishengyong:-4, yongketi:-8 };
+  const reso = RESO[relReso];
+
+  const S = Math.max(1, Math.min(100, zhu.base + reso));
+  const grade = gradeOf(S);
+  const shiScore = Math.max(1, Math.min(100, shi.base));
+  const tech = (ctx && ctx.tech) || null;
+  const mkScore = (ctx && ctx.mkScore != null) ? ctx.mkScore : shiScore;
+  const pts = pointsOf(price, S, zhu.isYangLine, zhu.trend, limitUp, tech ? tech.vol : null, mkScore);
+  const hour = bestHour(zhu.ti.wx);
+
+  const posCap = posCapOf(shiScore);
+  const posMax = posCap == null ? grade.posNum : Math.min(grade.posNum, posCap);
+  const posCapped = posCap != null && grade.posNum > posCap;
+
+  return {
+    info, shi, zhu, ming, snap, price, src, reso, relReso, S, shiScore, grade, pts, hour,
+    posCap, posMax, posCapped, limitUp,
+    board: boardOf(code), limitPct: Math.round(limitPctOf(code) * 100),
+    qtime: quote && quote.time ? quote.time : '', snapAt: DATA.meta.snapAt || '',
+    badBen: isBadGua(zhu.gua), badBian: isBadGua(zhu.bian),
+    name: (quote && quote.name) || (snap ? snap.n : '未知个股'),
+    chg: quote && quote.chg != null ? quote.chg : (snap ? snap.chg : null)
+  };
+}
+
+/* 断语 */
+function verdictOf(r) {
+  const z = r.zhu;
+  const rel = z.relTxt;
+  const trendTxt = z.trend > 0.8 ? '变卦气数转旺，后势渐开' : z.trend < -0.8 ? '变卦气数转衰，后继乏力' : '变卦与本卦气数相若，势不外扩';
+  return `本卦【${z.gua.label}】${z.yaoName}爻动，体${z.ti.n}（${z.ti.wx}）用${z.yong.n}（${z.yong.wx}），${rel.label}——${rel.desc}；`
+    + `体卦${z.strength}于${ZHI[r.info.monthBranch]}月，${trendTxt}。`
+    + `综评「<span class="hl">${r.grade.t}</span>」，${r.grade.adv}`
+    + (r.badBen ? ' <span class="hl">本卦名不吉</span>，分数受爻辞吉语抬升，宜降一级看待。' : '')
+    + (r.relReso === 'yongketi' ? ' 今日天时克体，切莫重仓。' : r.relReso === 'yongshengti' ? ' 今日天时生体，可借势。' : '');
+}
+
+function shiVerdict(r) {
+  const s = r.shi;
+  const S = r.shiScore;
+  const tone = S >= 70 ? '气旺' : S >= 55 ? '气平' : '气弱';
+  return `时运卦【${s.gua.label}】${s.yaoName}爻动，${s.relTxt.label}，大盘${tone}（${S.toFixed(0)}分）。`
+    + (S >= 70 ? '宜顺势做多，重个股。' : S >= 55 ? '宜选股不择时，轻仓轮动。' : '宜降低仓位，守多于攻。');
+}
+
+window.Xuan = { nowInfo, timeGua, stockGua, mingGua, analyze, verdictOf, shiVerdict, SMAP, ALL: ALL_CODES,
+  checkCode, boardOf, limitPctOf, guaOfKey, hexKey, mutualKey, changeKey, relOf, evalGua, pointsOf, gradeOf, posCapOf, isBadGua, r2,
+  BAGUA, XIANG_TRAIT, lunarOf, dayGzIdx, monthBranchOf, yearGzIdx };
+</script>
+
+<div id="toast"></div>
+
+<script id="ui-script">
+/* ================= UI ================= */
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 2) => (v == null || isNaN(v)) ? '--' : (+v).toFixed(d);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]));
+let _tt;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('on'), 2800); }
+
+/* 实时行情：优先 fetch（禁缓存），失败换 UTF-8 备用域名，再失败退回 script 标签 */
+const _gbk = new TextDecoder('gbk');
+const _utf8 = new TextDecoder('utf-8');
+
+function qPrefix(code) {
+  try { if (Xuan.boardOf(code) === '北交所') return 'bj'; } catch (e) {}
+  return code[0] === '6' ? 'sh' : 'sz';
+}
+
+function parseFields(p) {
+  if (!Array.isArray(p) || p.length < 45) return null;
+  const price = +p[3];
+  if (!price) return null;
+  const ts = String(p[30] || '');            // YYYYMMDDHHMMSS
+  const hhmm = /^\d{14}$/.test(ts) ? ts.slice(8, 10) + ':' + ts.slice(10, 12) : '';
+  return {
+    name: p[1].replace(/\s/g, ''), price, prevClose: +p[4], chg: +p[32],
+    hi: +p[33], lo: +p[34], amount: +p[37], turnover: +p[38], pe: +p[39],
+    time: hhmm
+  };
+}
+function parseQuoteText(txt) {
+  const m = txt.match(/="([^"]+)"/);
+  return m ? parseFields(m[1].split('~')) : null;
+}
+/* 备用通道：分钟线接口，同样带 qt 完整行情字段，且允许跨域 */
+async function ifzqQuote(q) {
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 6000);
+    const res = await fetch('https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=' + q + '&_t=' + Date.now(),
+      { signal: ctl.signal, cache: 'no-store' });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const j = await res.json();
+    const node = j && j.data && j.data[q];
+    const arr = node && node.qt && node.qt[q];
+    return parseFields(arr);
+  } catch (e) { return null; }
+}
+
+function scriptQuote(q) {
+  return new Promise(resolve => {
+    const varName = 'v_' + q, el = document.createElement('script');
+    el.charset = 'gbk';
+    el.src = 'https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now();
+    let done = false;
+    const finish = r => {
+      if (done) return; done = true; clearTimeout(timer);
+      try { el.remove(); } catch (e) {}
+      try { delete window[varName]; } catch (e) { window[varName] = undefined; }
+      resolve(r);
+    };
+    const timer = setTimeout(() => finish(null), 5000);
+    el.onload = () => {
+      const raw = window[varName];
+      finish(typeof raw === 'string' ? parseQuoteText('="' + raw + '"') : null);
+    };
+    el.onerror = () => finish(null);
+    document.head.appendChild(el);
+  });
+}
+
+async function fetchQuote(code) {
+  const q = qPrefix(code) + code;
+
+  /* 通道 1：主接口（原始文本，GBK） */
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 6000);
+    const res = await fetch('https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now(), { signal: ctl.signal, cache: 'no-store' });
+    clearTimeout(timer);
+    if (res.ok) {
+      const r = parseQuoteText(_gbk.decode(await res.arrayBuffer()));
+      if (r) { r.channel = 1; return r; }
+    }
+  } catch (e) { /* 下一个通道 */ }
+
+  /* 通道 2：分钟线接口（JSON，跨域友好） */
+  const r2 = await ifzqQuote(q);
+  if (r2) { r2.channel = 2; return r2; }
+
+  /* 通道 3：script 标签（老办法，最后兜底） */
+  const r3 = await scriptQuote(q);
+  if (r3) r3.channel = 3;
+  return r3;
+}
+
+/* 卦象 SVG：自下而上六爻 */
+function guaSvg(key, moving, color) {
+  const L = key.split('').map(Number);
+  const W = 132, H = 150, bw = 96, x0 = (W - bw) / 2, rowH = 20, gap = 4.6;
+  let out = `<svg class="gua-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  for (let i = 6; i >= 1; i--) {
+    const y = 10 + (6 - i) * rowH;
+    const isMov = moving === i;
+    const col = isMov ? '#b3341f' : (color || '#241f1a');
+    const op = isMov ? 1 : .86;
+    if (L[i - 1] === 1) {
+      out += `<rect x="${x0}" y="${y}" width="${bw}" height="9" rx="1.5" fill="${col}" opacity="${op}"/>`;
+    } else {
+      const w = (bw - gap) / 2;
+      out += `<rect x="${x0}" y="${y}" width="${w}" height="9" rx="1.5" fill="${col}" opacity="${op}"/>`;
+      out += `<rect x="${x0 + w + gap}" y="${y}" width="${w}" height="9" rx="1.5" fill="${col}" opacity="${op}"/>`;
+    }
+    if (isMov) out += `<circle cx="${x0 + bw + 11}" cy="${y + 4.5}" r="3.2" fill="#b3341f"/>`;
+  }
+  out += '</svg>';
+  return out;
+}
+
+function renderNow() {
+  const now = new Date();
+  const i = Xuan.nowInfo(now);
+  const lun = i.lunar;
+  const lunStr = lun ? `农历${['正','二','三','四','五','六','七','八','九','十','冬','腊'][lun.m - 1]}月${['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'][lun.d - 1] || lun.d + '日'}${lun.leap ? '（闰）' : ''}` : '农历 --';
+  const altWarn = lun ? '' : '<div style="flex-basis:100%;color:var(--red);font-size:12px">⚠ 历法表仅覆盖 2019–2045 年，当前日期超出范围，起卦已降级（农历按正月初一处理）</div>';
+  $('#nowBar').innerHTML = `
+    <div><span class="k">公历</span><b>${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}</b>
+      <span style="color:var(--ink3)">${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}</span></div>
+    <div><span class="k">农历</span><b>${lunStr}</b></div>
+    <div><span class="k">四柱</span>
+      <span class="pill">${i.yearGz}年</span> <span class="pill">${i.monthGz}月</span>
+      <span class="pill">${i.dayGz}日</span> <span class="pill">${i.hourGz}时</span></div>
+    <div style="margin-left:auto"><span class="k">月建</span><b>${ZHI[Xuan.monthBranchOf(now)]}月</b></div>
+    ${altWarn}`;
+}
+
+function renderMarket() {
+  const now = new Date();
+  const info = Xuan.nowInfo(now);
+  const s = Xuan.timeGua(info);
+  const S = Math.max(1, Math.min(100, s.base));
+  const g = Xuan.gradeOf(S);
+  const fake = { shi: s, shiScore: S, info };
+  $('#marketCard').innerHTML = `
+    <div class="gua-box fade">
+      ${guaSvg(s.key, s.moving)}
+      <div class="gua-name">${s.gua.label}</div>
+      <div class="gua-sub">上${s.gua.data.up}　下${s.gua.data.lo}　${s.yaoName}爻动</div>
+      <div class="gua-no">第 ${s.gua.data.i} 卦</div>
+    </div>
+    <div class="fade">
+      <div class="txt-block">
+        <div class="lbl">卦　辞</div>
+        <div class="val">${esc(s.gua.data.t)}</div>
+      </div>
+      <div class="txt-block">
+        <div class="lbl">动爻 · ${s.yaoName}（${s.isYangLine ? '阳变阴' : '阴变阳'}）</div>
+        <div class="val">${esc(s.yaoText)}</div>
+      </div>
+      <div class="chain">
+        <span class="chip">互卦 ${s.hu ? s.hu.label : '--'}</span><span class="arrow">→</span>
+        <span class="chip">变卦 ${s.bian ? s.bian.label : '--'}</span>
+        <span class="arrow">·</span>
+        <span class="chip">体 ${s.ti.n}${s.ti.wx}</span><span class="arrow">/</span>
+        <span class="chip">用 ${s.yong.n}${s.yong.wx}</span>
+        <span class="arrow">·</span>
+        <span class="chip">${s.relTxt.label}</span>
+        <span class="chip">体卦${s.strength}</span>
+      </div>
+      <div class="verdict" style="margin-top:14px">${Xuan.shiVerdict(fake)}</div>
+    </div>
+    <div class="score-wrap fade">
+      <div class="big-score">${S.toFixed(0)}<small> / 100</small></div>
+      <div class="grade ${g.c}">${g.t}</div>
+      <div class="bars">
+        <div class="bar-row"><div class="t"><span>卦辞气数</span><span>${s.subs.A.toFixed(0)}</span></div><div class="bar"><i style="width:${s.subs.A}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>动爻爻辞</span><span>${s.subs.B.toFixed(0)}</span></div><div class="bar"><i style="width:${s.subs.B}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>体用生克</span><span>${s.subs.C.toFixed(0)}</span></div><div class="bar"><i style="width:${s.subs.C}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>时令旺衰</span><span>${s.subs.D.toFixed(0)}</span></div><div class="bar"><i style="width:${s.subs.D}%"></i></div></div>
+      </div>
+    </div>`;
+}
+
+const QUICK = ['600519','000858','601318','002594','600036','000333','601899','002230'];
+function renderQuick() {
+  const tot = Xuan.ALL.length;
+  $('#quickList').innerHTML = `<span class="muted" style="align-self:center;margin-right:2px">已载入全部 A 股 ${tot} 只 · 快选</span>` +
+    QUICK.map(c => `<button data-code="${c}">${Xuan.SMAP[c] ? Xuan.SMAP[c].n : c}</button>`).join('');
+  $('#quickList').querySelectorAll('button').forEach(b => b.onclick = () => {
+    $('#stockCode').value = b.dataset.code; $('#stockPrice').value = ''; divine();
+  });
+}
+
+function renderResult(r) {
+  const z = r.zhu;
+  const chg = r.chg;
+  const cls = chg == null ? '' : chg > 0 ? 'up' : chg < 0 ? 'down' : '';
+  const sign = chg == null ? '' : (chg > 0 ? '+' : '');
+  $('#resultArea').style.display = 'block';
+  $('#resultArea').innerHTML = `
+  <div class="res fade" style="border-top:1px solid var(--line);padding-top:18px;margin-top:6px">
+    <div>
+      <div class="res-head">
+        <span class="nm">${esc(r.name)}</span>
+        <span class="cd">${r.code}</span>
+        <span class="px ${cls}">¥${fmt(r.price)}</span>
+        ${chg == null ? '' : `<span class="${cls}" style="font-size:13px">${sign}${fmt(chg)}%</span>`}
+        <span class="src" style="${r.src === '快照' ? 'color:var(--red);border-color:rgba(179,52,31,.45)' : ''}">${r.src}价${r.src === '实时' && r.qtime ? ' ' + r.qtime : ''}</span>
+        <span class="src" style="${r.board !== '主板' ? 'color:var(--red);border-color:rgba(179,52,31,.4)' : ''}">${r.board}${r.board !== '主板' ? ' · 无交易权限' : ''}</span>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="gua-box" style="flex:0 0 auto">
+          ${guaSvg(z.key, z.moving)}
+          <div class="gua-name">${z.gua.label}</div>
+          <div class="gua-sub">${z.yaoName}爻动 · ${z.isYangLine ? '阳动' : '阴动'}</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="chain" style="margin-top:0">
+            <span class="chip">本卦 ${z.gua.label}</span>${r.badBen ? '<span class="warn">卦名不吉</span>' : ''}<span class="arrow">→</span>
+            <span class="chip">变卦 ${z.bian ? z.bian.label : '--'}</span>${r.badBian ? '<span class="warn">变卦不吉</span>' : ''}
+          </div>
+          <div class="kv">
+            <div class="k">本卦辞</div><div class="v">${esc(z.gua.data.t)}</div>
+            <div class="k">动爻辞</div><div class="v">${esc(z.yaoName)}：${esc(z.yaoText)}</div>
+            <div class="k">体用</div><div class="v">体${z.ti.n}（${z.ti.wx}）· 用${z.yong.n}（${z.yong.wx}）→ ${z.relTxt.label}，${z.relTxt.desc}</div>
+            <div class="k">时令</div><div class="v">体卦${z.strength}（${r.info.monthGz}月）</div>
+            <div class="k">互卦</div><div class="v">${z.hu ? z.hu.label : '--'}（过程之象）</div>
+            <div class="k">趋势</div><div class="v">${z.trend > 0.8 ? '变卦气数转旺，后势渐开' : z.trend < -0.8 ? '变卦气数转衰，后继乏力' : '变卦气数相若，势不外扩'}</div>
+            <div class="k">本命卦</div><div class="v">${r.ming.label} · ${r.ming.lo.x}象：${Xuan.XIANG_TRAIT[r.ming.lo.x]}</div>
+          </div>
+        </div>
+      </div>
+      <div class="verdict">${Xuan.verdictOf(r)}</div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="big-score">${r.S.toFixed(0)}<small> / 100</small></div>
+        <div>
+          <div class="grade ${r.grade.c}">${r.grade.t}</div>
+          <div class="muted" style="margin-top:6px;letter-spacing:1px">建议仓位 ${r.posMax === 0 ? '空仓' : '≤ ' + r.posMax + ' 成'}${r.posCapped ? ` <b style="color:var(--red)">·天时压制</b>` : ''}</div>
+        </div>
+      </div>
+      <div class="bars" style="margin-top:14px">
+        <div class="bar-row"><div class="t"><span>卦辞气数</span><span>${z.subs.A.toFixed(0)}</span></div><div class="bar"><i style="width:${z.subs.A}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>动爻爻辞</span><span>${z.subs.B.toFixed(0)}</span></div><div class="bar"><i style="width:${z.subs.B}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>体用生克</span><span>${z.subs.C.toFixed(0)}</span></div><div class="bar"><i style="width:${z.subs.C}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>时令旺衰</span><span>${z.subs.D.toFixed(0)}</span></div><div class="bar"><i style="width:${z.subs.D}%"></i></div></div>
+        <div class="bar-row"><div class="t"><span>天时共振</span><span>${r.reso > 0 ? '+' : ''}${r.reso}</span></div><div class="bar"><i style="width:${(r.reso + 8) / 16 * 100}%"></i></div></div>
+      </div>
+      <div class="pts">
+        <div class="pt buy"><div class="l">买一（浅回踩）</div><div class="n up">¥${fmt(r.pts.b1)}</div></div>
+        <div class="pt buy"><div class="l">买二（深回踩·加仓）</div><div class="n up">¥${fmt(r.pts.b2)}</div></div>
+        <div class="pt target"><div class="l">目标一</div><div class="n" style="color:var(--gold)">¥${fmt(r.pts.t1)}</div></div>
+        <div class="pt target"><div class="l">目标二</div><div class="n" style="color:var(--gold)">¥${fmt(r.pts.t2)}</div></div>
+        <div class="pt stop"><div class="l">止损（破则走）</div><div class="n down">¥${fmt(r.pts.stop)}</div></div>
+        <div class="pt"><div class="l">吉时（体${z.ti.wx}）</div><div class="n" style="font-size:15px">${r.hour.name} ${r.hour.span}</div></div>
+      </div>
+      <div class="note-line">
+        ${r.src === '快照' ? `<b>⚠ 实时行情没取到，以下价格与点位基于 ${r.snapAt || '上一交易日'} 收盘快照，盘中不可直接照此下单；可在「现价」框手填当前价重算。</b><br>` : ''}
+        ${r.limitUp ? `次日涨停价（${r.board} ${r.limitPct}%）<b>¥${fmt(r.limitUp)}</b>${r.pts.capped ? '（目标位已按涨停封顶）' : '（目标位未触涨停）'}${r.price < 1 ? '｜<b>股价低于 1 元，点位受 0.01 元最小变动价位限制，参考意义有限</b>' : ''}` : ''}
+        ${r.posCapped ? `<br>今日天时 ${r.shiScore.toFixed(0)} 分，大盘卦偏弱，单只仓位已从「${r.grade.pos}」压至「≤ ${r.posMax} 成」` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function resolveCode(v) {
+  v = (v || '').trim();
+  if (/^\d{6}$/.test(v)) return v;
+  if (!v) return v;
+  const hit = searchStocks(v, 1);
+  return hit.length ? hit[0] : v;
+}
+
+let _busy = false;
+async function divine() {
+  const code = resolveCode($('#stockCode').value);
+  $('#stockCode').value = code;
+  const err = Xuan.checkCode(code);
+  if (err) { toast(err); $('#stockCode').classList.add('shake'); setTimeout(() => $('#stockCode').classList.remove('shake'), 320); return; }
+  if (_busy) return;
+  const manual = parseFloat($('#stockPrice').value);
+  let quote = null;
+  if (isNaN(manual)) {
+    _busy = true; $('#btnDivine').textContent = '取价中…';
+    try { quote = await fetchQuote(code); } catch (e) { quote = null; }
+    $('#btnDivine').textContent = '起 卦 测 算'; _busy = false;
+  }
+  const r = Xuan.analyze(code, new Date(), isNaN(manual) ? null : manual, quote);
+  if (r.error) { toast(r.error); return; }
+  if (!quote && isNaN(manual) && r.src === '快照') {
+    toast('实时行情取不到，已改用 ' + (r.snapAt || '上一交易日') + ' 收盘快照价');
+  }
+  r.code = code;
+  renderResult(r);
+  window.__last = r;
+  try { history.replaceState(null, '', location.pathname + location.search + '#' + code); } catch (e) {}
+}
+
+function renderBatch(rows, total, uniqCount, scoreCount) {
+  const el = $('#batchResult');
+  el.style.display = 'block';
+  window.__batch = rows;
+  window.__batchTotal = total; window.__batchUniq = uniqCount || rows.length;
+  if (!rows.length) { el.innerHTML = '<div class="muted">无可测算标的</div>'; return; }
+  el.innerHTML = `<div class="tbl-wrap"><table><thead><tr>
+    <th style="width:38px">#</th><th>名称</th><th>代码</th><th>本卦</th><th>动爻</th>
+    <th>体用</th><th>评分</th><th>评级</th><th>买一</th><th>目标一</th><th>仓位</th></tr></thead>
+    <tbody>${rows.map((r, i) => `
+      <tr data-code="${r.code}">
+        <td><span class="rank ${i < 3 ? 'top' : ''}">${i + 1}</span></td>
+        <td>${esc(r.name)}${r.board !== '主板' ? `<span style="color:var(--ink3);font-size:10px;margin-left:4px">${r.board === '创业板' ? '创' : r.board === '科创板' ? '科' : '北'}</span>` : ''}</td>
+        <td class="num" style="color:var(--ink3)">${r.code}</td>
+        <td>${r.zhu.gua.label}${r.badBen ? ' <span style="color:var(--red)">⚠</span>' : ''}</td>
+        <td style="color:var(--ink3)">${r.zhu.yaoName}</td>
+        <td style="color:${r.zhu.relTxt.c >= 80 ? 'var(--red)' : r.zhu.relTxt.c <= 40 ? 'var(--green)' : 'var(--ink2)'}">${r.zhu.relTxt.label}</td>
+        <td class="num"><span class="mini-bar"><i style="width:${r.S}%"></i></span> ${r.S.toFixed(0)}${scoreCount && scoreCount[Math.round(r.S)] > 1 ? `<span class="muted" style="font-size:10px">·同分${scoreCount[Math.round(r.S)]}</span>` : ''}</td>
+        <td><span class="grade ${r.grade.c}" style="font-size:12px;padding:2px 9px;letter-spacing:2px">${r.grade.t}</span></td>
+        <td class="num">${fmt(r.pts.b1)}</td>
+        <td class="num">${fmt(r.pts.t1)}</td>
+        <td style="color:var(--ink3)">${r.posMax === 0 ? '空仓' : '≤' + r.posMax + ' 成'}${r.posCapped ? '<span style="color:var(--red)">*</span>' : ''}</td>
+      </tr>`).join('')}</tbody></table></div>
+    <div class="muted" style="margin-top:10px">共 ${total || rows.length} 只论卦${uniqCount && uniqCount < total ? `，同卦同动爻者合并，得 ${uniqCount} 种卦断` : ''} · 按卦气降序${total && total > rows.length && uniqCount === total ? `，显示前 ${rows.length} 名` : ''} · 点击行回填测算</div>
+    <div class="muted" style="margin-top:4px">点位基于 ${DATA.meta.snapAt || '上一交易日'} 收盘快照；单只测算会自动取实时价。名称后的 <span style="color:var(--ink3)">创／科／北</span> 表示创业板／科创板／北交所（你的账户无此交易权限，仅供观察）；⚠ 卦名不吉（否／困／蹇／讼／剥等），分数受爻辞吉语抬升，宜降级看待；<span style="color:var(--red)">*</span> 天时偏弱，仓位已按天时上限折减。${uniqCount && uniqCount < total ? '同卦同动爻即同一卦断，每组仅取成交额最大的代表股。' : ''}</div>`;
+  el.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => {
+    $('#stockCode').value = tr.dataset.code; $('#stockPrice').value = '';
+    divine(); $('#stockCode').scrollIntoView({ behavior:'smooth', block:'center' });
+  });
+}
+
+async function runBatch(codes, limit) {
+  const now = new Date();
+  const info = Xuan.nowInfo(now), shi = Xuan.timeGua(info);   // 天时只算一次，3125 只复用
+  const pre = { info, shi };
+  const rows = [], skipBoard = [], skipPrice = [];
+  const need = codes.filter(c => !Xuan.checkCode(c) && !Xuan.SMAP[c]).slice(0, 40);
+  const live = {};
+  if (need.length) {
+    $('#batchResult').style.display = 'block';
+    $('#batchResult').innerHTML = '<div class="muted">正在取价，共 ' + need.length + ' 只…</div>';
+    await Promise.all(need.map(async c => { const q = await fetchQuote(c); if (q) live[c] = q; }));
+  }
+  for (const c of codes) {
+    const err = Xuan.checkCode(c);
+    if (err) { skipBoard.push(c); continue; }
+    const r = Xuan.analyze(c, now, null, live[c] || null, pre);
+    if (r.error) { skipPrice.push(c); continue; }
+    r.code = c; rows.push(r);
+  }
+  rows.sort((a, b) => b.S - a.S || ((b.snap && b.snap.amt) || 0) - ((a.snap && a.snap.amt) || 0));
+  const scoreCount = {};
+  rows.forEach(r => { const k = Math.round(r.S); scoreCount[k] = (scoreCount[k] || 0) + 1; });
+
+  if (limit) {
+    /* 同卦同动爻视为同一卦断，只留成交额最大的代表股 */
+    const seen = new Set(), uniq = [];
+    for (const r of rows) {
+      const k = r.zhu.gua.label + '|' + r.zhu.yaoName;
+      if (seen.has(k)) continue;
+      seen.add(k); uniq.push(r);
+    }
+    renderBatch(uniq.slice(0, limit), rows.length, uniq.length, scoreCount);
+  } else {
+    renderBatch(rows, rows.length, rows.length, scoreCount);
+  }
+
+  const sk = [];
+  if (skipBoard.length) sk.push(`非 A 股代码 ${skipBoard.length} 只（${skipBoard.slice(0, 6).join('、')}${skipBoard.length > 6 ? '…' : ''}）`);
+  if (skipPrice.length) sk.push(`取不到价 ${skipPrice.length} 只（${skipPrice.slice(0, 6).join('、')}${skipPrice.length > 6 ? '…' : ''}）`);
+  if (sk.length) $('#batchResult').insertAdjacentHTML('beforeend', `<div class="muted" style="margin-top:6px">已跳过：${sk.join('；')}</div>`);
+}
+
+/* 事件 */
+$('#btnDivine').onclick = divine;
+$('#btnRand').onclick = () => {
+  const keys = Xuan.ALL;
+  const c = keys[Math.floor(Math.random() * keys.length)];
+  $('#stockCode').value = c; $('#stockPrice').value = ''; divine();
+};
+$('#stockCode').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { if (_sugIdx >= 0 && _sugList.length) pickSug(_sugIdx); else divine(); }
+});
+$('#btnBatch').onclick = () => {
+  const raw = ($('#batchInput').value || '').replace(/[，、;；\s]+/g, ',').split(',').filter(Boolean);
+  runBatch([...new Set(raw)]);
+};
+$('#btnScanAll').onclick = async () => {
+  if (window.__batchBusy) return;
+  window.__batchBusy = true;
+  const btn = $('#btnScanAll');
+  btn.textContent = '论卦中…';
+  $('#batchInput').value = '全量 A 股 ' + Xuan.ALL.length + ' 只';
+  await runBatch(Xuan.ALL, 60);
+  $('#batchInput').value = '';
+  btn.textContent = '扫描全部 A 股';
+  window.__batchBusy = false;
+};
+
+/* ---------- 名称模糊搜索：全角归一 + 前缀/包含/跳字/拼音首字母 ---------- */
+const normQ = v => String(v == null ? '' : v)
+  .replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+  .replace(/[\s\u3000·・\-—()（）,，.。、]/g, '')
+  .toLowerCase();
+
+/* 跳字匹配：贵…茅 能命中 贵州茅台 */
+function isSubseq(q, s) {
+  let i = 0;
+  for (let j = 0; j < s.length && i < q.length; j++) if (s[j] === q[i]) i++;
+  return i === q.length;
+}
+
+function searchStocks(q, limit) {
+  const nq = normQ(q);
+  if (!nq) return [];
+  const lim = limit || 8, out = [];
+  for (const c of Xuan.ALL) {
+    const s = Xuan.SMAP[c];
+    if (!s) continue;
+    const name = normQ(s.n), py = s.py || '';
+    let sc = -1;
+    if (c === nq) sc = 130;
+    else if (name === nq) sc = 120;
+    else if (name.startsWith(nq)) sc = 110 - name.length;
+    else if (name.includes(nq)) sc = 90 - name.indexOf(nq) * 3;
+    else if (py && py.startsWith(nq)) sc = 75 - Math.abs(py.length - nq.length);
+    else if (nq.length >= 2 && py && py.includes(nq)) sc = 60;
+    else if (nq.length >= 2 && isSubseq(nq, name)) sc = 45 - name.length;
+    else if (/^\d+$/.test(nq) && c.startsWith(nq)) sc = 30;
+    if (sc >= 0) out.push({ c, sc, amt: s.amt || 0 });
+  }
+  out.sort((a, b) => b.sc - a.sc || b.amt - a.amt);
+  return out.slice(0, lim).map(o => o.c);
+}
+
+const _inp = $('#stockCode'), _sug = $('#sugList');
+let _sugList = [], _sugIdx = -1;
+
+function paintSug() {
+  if (!_sugList.length) { _sug.classList.remove('on'); _sug.innerHTML = ''; return; }
+  _sug.innerHTML = _sugList.map((c, i) => {
+    const s = Xuan.SMAP[c];
+    return `<div data-i="${i}" class="${i === _sugIdx ? 'act' : ''}">${esc(s.n)}<span>${c}　${fmt(s.p)}</span></div>`;
+  }).join('');
+  _sug.classList.add('on');
+  _sug.querySelectorAll('div[data-i]').forEach(d => d.onclick = () => pickSug(+d.dataset.i));
+}
+
+function pickSug(i) {
+  const c = _sugList[i];
+  if (!c) return;
+  _inp.value = c;
+  _sug.classList.remove('on'); _sugIdx = -1; _sugList = [];
+  divine();
+}
+
+_inp.addEventListener('input', () => {
+  const q = _inp.value.trim();
+  _sugIdx = -1;
+  if (!q || /^\d{6}$/.test(q)) { _sugList = []; _sug.classList.remove('on'); _sug.innerHTML = ''; return; }
+  _sugList = searchStocks(q, 8);
+  if (!_sugList.length) {
+    _sug.innerHTML = `<div class="empty">未找到「${esc(q)}」
+      <div style="margin-top:5px;font-size:11px;line-height:1.6">本工具收录全部 A 股 ${Xuan.ALL.length} 只；<br>若仍搜不到，可能是 B 股、基金、债券或代码有误。</div>
+    </div>`;
+    _sug.classList.add('on');
+    return;
+  }
+  paintSug();
+});
+
+_inp.addEventListener('keydown', e => {
+  const open = _sug.classList.contains('on') && _sugList.length > 0;
+  if (e.key === 'ArrowDown' && open) { e.preventDefault(); _sugIdx = (_sugIdx + 1) % _sugList.length; paintSug(); }
+  else if (e.key === 'ArrowUp' && open) { e.preventDefault(); _sugIdx = (_sugIdx - 1 + _sugList.length) % _sugList.length; paintSug(); }
+  else if (e.key === 'Escape') { _sug.classList.remove('on'); _sugIdx = -1; }
+});
+
+document.addEventListener('click', e => { if (!e.target.closest('.sbox')) _sug.classList.remove('on'); });
+
+/* 导出今日报告：现场生成一份可保存/分享的 HTML */
+function buildReportHTML(rows, info, shi, shiScore, stats) {
+  const esc2 = t => String(t == null ? '' : t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const d = info.date;
+  const ymd = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const top = rows.slice(0, 3), rest = rows.slice(0, 30);
+
+  const card = (r, i) => {
+    const z = r.zhu;
+    return `<div class="pick">
+      <div class="pick-h"><span class="tag">${i === 0 ? '主选' : '备选 ' + i}</span>
+        <span class="nm">${esc2(r.name)}</span><span class="cd">${r.code}</span>
+        <span class="px ${r.chg > 0 ? 'up' : 'down'}">${fmt(r.price)}　${r.chg > 0 ? '+' : ''}${r.chg}%</span>
+        <span class="sc">${r.S.toFixed(0)}<small>分</small></span></div>
+      <div class="pick-b"><div>
+        <div class="lbl">本卦 · ${z.gua.label}　${z.yaoName}爻动 → 变 ${z.bian.label}</div>
+        <div class="q">「${esc2(z.yaoText)}」</div>
+        <div class="q2" style="margin-top:8px">体${z.ti.n}（${z.ti.wx}）用${z.yong.n}（${z.yong.wx}）→ <b>${z.relTxt.label}</b>；体卦${z.strength}。${r.badBen ? '<span style="color:#b3341f">卦名不吉，宜降级</span>' : ''}</div>
+      </div>
+      <div class="grid">
+        <div class="cell"><span>买入</span><b class="up">${fmt(r.pts.b1)}</b><i>次档 ${fmt(r.pts.b2)}</i></div>
+        <div class="cell"><span>止损</span><b class="down">${fmt(r.pts.stop)}</b><i>破则走</i></div>
+        <div class="cell"><span>目标一</span><b class="gold">${fmt(r.pts.t1)}</b><i>二 ${fmt(r.pts.t2)}</i></div>
+        <div class="cell"><span>仓位</span><b>${r.posMax === 0 ? '空仓' : '≤' + r.posMax + ' 成'}</b><i style="${r.board !== '主板' ? 'color:#b3341f' : ''}">${r.board}${r.board !== '主板' ? '·无权限' : ''}</i></div>
+      </div></div></div>`;
+  };
+
+  const tr = rows.map((r, i) => `<tr>
+    <td class="c">${i + 1}</td><td>${esc2(r.name)}${r.board !== '主板' ? ' <span class="muted">' + r.board.slice(0, 1) + '</span>' : ''}</td>
+    <td class="c mono">${r.code}</td><td class="c mono">${fmt(r.price)}</td>
+    <td class="c mono ${r.chg > 0 ? 'up' : 'down'}">${r.chg > 0 ? '+' : ''}${r.chg}%</td>
+    <td class="c">${r.zhu.gua.label}${r.badBen ? ' ⚠' : ''}</td><td class="c muted">${r.zhu.yaoName}</td>
+    <td class="c">${r.zhu.relTxt.label}</td><td class="c mono"><b>${r.S.toFixed(0)}</b></td>
+    <td class="c">${r.grade.t}</td><td class="c mono up">${fmt(r.pts.b1)}</td>
+    <td class="c mono down">${fmt(r.pts.stop)}</td><td class="c mono gold">${fmt(r.pts.t1)}</td>
+    <td class="c">${r.posMax === 0 ? '空仓' : r.posMax + '成'}</td></tr>`).join('');
+
+  return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>玄学选股报告 · ${ymd} ${hm}</title>
+<style>
+:root{--paper:#f7f2e7;--panel:#fffdf7;--panel2:#fbf6ea;--ink:#241f1a;--ink2:#5f5749;--ink3:#8b8172;--line:#e3d8c2;--red:#b3341f;--green:#1a7a5c;--gold:#a9812f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:radial-gradient(1100px 500px at 8% -8%,#fffdf6,rgba(255,253,246,0) 60%),var(--paper);padding:28px 18px 60px}
+.wrap{max-width:1120px;margin:0 auto}
+h1{font-family:"Songti SC","SimSun",serif;font-size:26px;letter-spacing:5px}
+.sub{font-size:12px;color:var(--ink3);letter-spacing:2px;margin-top:8px}
+.hd{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.meta{font-size:12px;color:var(--ink2);line-height:1.9;text-align:right}
+.meta b{color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.st{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+.st span{font-size:11px;color:var(--ink3)} .st b{display:block;font-family:"Songti SC",serif;font-size:20px;margin-top:3px}
+h2{font-family:"Songti SC",serif;font-size:17px;letter-spacing:3px;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:4px;height:16px;background:var(--red);border-radius:2px}
+.note{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:12px 15px;font-size:12.5px;line-height:1.9;color:#7a3125}
+.pick{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:12px}
+.pick-h{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:11px}
+.tag{background:var(--red);color:#fff;font-size:11px;padding:3px 9px;border-radius:5px}
+.nm{font-family:"Songti SC",serif;font-size:19px;font-weight:600}
+.cd{font-size:12px;color:var(--ink3)}
+.px{font-family:"Songti SC",serif;font-size:15px;font-weight:600}
+.sc{margin-left:auto;font-family:"Songti SC",serif;font-size:26px;color:var(--red)}
+.sc small{font-size:11px;color:var(--ink3)}
+.pick-b{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+@media(max-width:820px){.pick-b{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+.lbl{font-size:11px;color:var(--red);letter-spacing:1.5px;margin-bottom:4px}
+.q{font-family:"Songti SC",serif;font-size:15px;line-height:1.8}
+.q2{font-size:12.5px;line-height:1.85;color:var(--ink2)} .q2 b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;align-content:start}
+.cell{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.cell span{font-size:10.5px;color:var(--ink3);display:block}
+.cell b{font-family:"Songti SC",serif;font-size:17px;display:block;margin-top:2px}
+.cell i{font-size:10px;font-style:normal;color:var(--ink3);display:block;margin-top:2px}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:11px;overflow:hidden;font-size:12.5px}
+th{background:var(--panel2);font-weight:500;font-size:11px;color:var(--ink3);padding:8px 7px;text-align:left;white-space:nowrap}
+td{padding:7px;border-top:1px solid #f0e9da;white-space:nowrap}
+td.c,th.c{text-align:center}
+.mono{font-variant-numeric:tabular-nums;font-family:"SFMono-Regular",Consolas,monospace;font-size:12px}
+.muted{color:var(--ink3)}
+.up{color:var(--red)} .down{color:var(--green)} .gold{color:var(--gold)}
+.foot{margin-top:20px;font-size:11.5px;color:var(--ink3);line-height:2;text-align:center}
+</style></head><body><div class="wrap">
+<div class="hd"><div><h1>玄学选股报告</h1><div class="sub">周易 · 梅花易数 · 五行体用 · 现场起卦</div></div>
+<div class="meta">生成于 <b>${ymd} ${hm}</b>（${info.hourGz}时）<br>${info.yearGz}年 ${info.monthGz}月 ${info.dayGz}日 · 农历${info.lunar ? info.lunar.m + '月' + info.lunar.d + '日' : '--'}<br>
+天时卦 ${shi.gua.label} ${shi.yaoName}爻动 · ${shiScore.toFixed(0)}分</div></div>
+
+<div class="stats">
+  <div class="st"><span>扫描标的</span><b>${stats.total}<small style="font-size:11px;color:#8b8172"> 只</small></b></div>
+  <div class="st"><span>卦断数（去重）</span><b>${stats.uniq}<small style="font-size:11px;color:#8b8172"> 种</small></b></div>
+  <div class="st"><span>大吉 / 吉（本页）</span><b>${stats.大吉 || 0} / ${stats.吉 || 0}</b></div>
+  <div class="st"><span>天时</span><b style="color:${shiScore >= 60 ? 'var(--red)' : 'var(--green)'}">${shiScore.toFixed(0)}<small style="font-size:11px;color:#8b8172"> 分</small></b></div>
+</div>
+
+<div class="note"><b>天时先看：</b>${shi.gua.label}${shi.yaoName}爻动，${shiScore.toFixed(0)} 分。${shiScore >= 60 ? '气数可用，可按卦位正常配仓。' : '大盘卦偏弱，个股再吉也应按天时折仓——下方仓位均已按天时上限压过。'} 价位基于 ${DATA.meta.snapAt || '最近收盘'} 快照，盘中请重新取价。</div>
+
+<h2>主选与备选</h2>
+${top.map((r, i) => card(r, i)).join('')}
+
+<h2>卦气排序（前 ${rest.length}）</h2>
+<table><thead><tr><th class="c">#</th><th>名称</th><th class="c">代码</th><th class="c">现价</th><th class="c">涨跌</th>
+<th class="c">本卦</th><th class="c">动爻</th><th class="c">体用</th><th class="c">评分</th><th class="c">评级</th>
+<th class="c">买入</th><th class="c">止损</th><th class="c">目标</th><th class="c">仓位</th></tr></thead><tbody>${tr}</tbody></table>
+
+<div class="note" style="margin-top:14px"><b>口径：</b>同卦同动爻视为同一卦断，仅列成交额最大的代表股；分数＝卦辞判词＋动爻判词＋体用生克＋时令旺衰，卦名本身不计分，故「否／困／蹇／讼／剥」等凶卦若动爻辞带吉语仍可能拿高分（表中以 ⚠ 标出）。名称后的「创／科／北」表示创业板／科创板／北交所。</div>
+
+<div class="foot">本页由《周易》梅花易数规则程序化生成，属传统文化研究与娱乐实验，<b>不具备预测效力，不构成投资建议</b><br>卦以八除，爻以六除，余零取八或六</div>
+</div></body></html>`;
+}
+
+$('#btnReport').onclick = () => {
+  const rows = window.__batch || [];
+  if (!rows.length) { toast('先跑一次批量选股'); return; }
+  const now = new Date();
+  const info = Xuan.nowInfo(now);
+  const shi = Xuan.timeGua(info);
+  const stats = { total: window.__batchTotal || rows.length, uniq: window.__batchUniq || rows.length };
+  rows.forEach(r => { stats[r.grade.t] = (stats[r.grade.t] || 0) + 1; });
+  const html = buildReportHTML(rows, info, shi, Math.max(1, Math.min(100, shi.base)), stats);
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '玄学选股报告-' + now.toISOString().slice(0, 10) + '.html';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* 导出 CSV */
+$('#btnCSV').onclick = () => {
+  const rows = window.__batch || [];
+  if (!rows.length) { toast('先跑一次批量选股'); return; }
+  const head = ['排名','名称','代码','现价','涨跌%','本卦','动爻','体用','评分','评级','仓位(成)','买一','买二','止损','目标一','目标二','次日涨停'];
+  const lines = [head.join(',')];
+  rows.forEach((r, i) => lines.push([
+    i + 1, r.name, r.code, fmt(r.price), r.chg == null ? '' : r.chg,
+    r.zhu.gua.label, r.zhu.yaoName, r.zhu.relTxt.label, r.S.toFixed(1), r.grade.t,
+    r.posMax, fmt(r.pts.b1), fmt(r.pts.b2), fmt(r.pts.stop), fmt(r.pts.t1), fmt(r.pts.t2),
+    r.limitUp ? fmt(r.limitUp) : ''
+  ].join(',')));
+  const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '玄学选股-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* 头部「今日全市场扫描」：滚到批量区并现场跑一次全量论卦（用当前时空，不是历史快照） */
+const _lnk = document.getElementById('lnkScan');
+if (_lnk) _lnk.addEventListener('click', e => {
+  e.preventDefault();
+  const sec = document.getElementById('scan');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!window.__batchBusy) $('#btnScanAll').click();
+});
+
+/* 内链继承 sharecode（静态托管要求每个 URL 都带凭证） */
+document.querySelectorAll('a.h-link').forEach(a => {
+  const h = a.getAttribute('href') || '';
+  if (h.startsWith('#') || h.includes('?')) return;      // 锚点不拼查询串
+  if (location.search) a.href = h + location.search;
+});
+
+/* 初始化 */
+renderNow();
+renderMarket();
+renderQuick();
+(function () {
+  const m = (location.hash || '').match(/^#(\d{6})$/);
+  if (m && !Xuan.checkCode(m[1])) { $('#stockCode').value = m[1]; divine(); }
+})();
+setInterval(renderNow, 30000);
+</script>
+</body>
+</html>
