@@ -646,28 +646,32 @@ const mktRelTxt = rel => ({ yongshengti: '外力来助，吉', tikeyong: '费力
 const mktScore = g => Math.round(0.32 * g.subs.A + 0.30 * g.subs.B + 0.23 * g.subs.C + 0.15 * g.subs.D);
 const band = v => (v >= 66 ? 1 : v >= 52 ? 0 : -1);
 
-/* 取盘面数据 */
+/* 取盘面数据（并发 10 批，避免串行过慢） */
 async function fetchBreadth(onProgress) {
   const codes = FR.map(r => r.code);
+  const batches = [];
+  for (let i = 0; i < codes.length; i += 100) batches.push(codes.slice(i, i + 100));
   const res = {};
-  let done = 0;
-  for (let i = 0; i < codes.length; i += 100) {
-    const list = codes.slice(i, i + 100);
-    const pre = list.map(c => (c[0] === '6' ? 'sh' : 'sz') + c).join(',');
-    try {
-      const r = await fetch('https://qt.gtimg.cn/q=' + pre + '&_t=' + Date.now(), { cache: 'no-store' });
-      const txt = gbk.decode(await r.arrayBuffer());
-      for (const line of txt.split('\n')) {
-        const m = line.match(/v_([a-z]{2}\d{6})="([^"]*)"/);
-        if (!m || !m[2]) continue;
-        const p = m[2].split('~');
-        if (p.length < 46 || !+p[3]) continue;
-        res[m[1].slice(2)] = { chg: +p[32], amt: +p[37] };
-      }
-    } catch (e) {}
-    done += list.length;
-    if (onProgress) onProgress(Math.round(done / codes.length * 100));
-  }
+  let done = 0, idx = 0;
+  await Promise.all(Array.from({ length: 10 }, async () => {
+    while (idx < batches.length) {
+      const list = batches[idx++];
+      const pre = list.map(c => (c[0] === '6' ? 'sh' : 'sz') + c).join(',');
+      try {
+        const r = await fetch('https://qt.gtimg.cn/q=' + pre + '&_t=' + Date.now(), { cache: 'no-store' });
+        const txt = gbk.decode(await r.arrayBuffer());
+        for (const line of txt.split('\n')) {
+          const m = line.match(/v_([a-z]{2}\d{6})="([^"]*)"/);
+          if (!m || !m[2]) continue;
+          const p = m[2].split('~');
+          if (p.length < 46 || !+p[3]) continue;
+          res[m[1].slice(2)] = { chg: +p[32], amt: +p[37] };
+        }
+      } catch (e) {}
+      done += list.length;
+      if (onProgress) onProgress(Math.round(done / codes.length * 100));
+    }
+  }));
   const arr = Object.values(res);
   if (!arr.length) return null;
   const up = arr.filter(x => x.chg > 0).length, dn = arr.filter(x => x.chg < 0).length;
