@@ -407,9 +407,9 @@ function pickThree(bao) {
 
 /* ================= 第二卦：复占（再报一数，另起一卦） ================= */
 function recast(code, price, quote, bao1) {
-  /* 报数差为 24 的倍数时三要素同时归零 → 两次卦象相同，须避开 */
+  /* 报数差为 8 的倍数 → 上下卦不变（卦名重复）；为 24 的倍数 → 连动爻也一样。两种都要避开 */
   let bao2 = 1 + Math.floor(Math.random() * 999);
-  for (let k = 0; k < 10 && bao1 && Math.abs(bao2 - bao1) % 24 === 0; k++) {
+  for (let k = 0; k < 20 && bao1 && Math.abs(bao2 - bao1) % 8 === 0; k++) {
     bao2 = 1 + Math.floor(Math.random() * 999);
   }
   const now = new Date();
@@ -808,7 +808,7 @@ function againCast() {
   const info = Xuan.nowInfo(new Date());
   const b0 = MKT.casts[0].bao;
   let bao = 1 + Math.floor(Math.random() * 999);
-  for (let k = 0; k < 10 && Math.abs(bao - b0) % 24 === 0; k++) bao = 1 + Math.floor(Math.random() * 999);
+  for (let k = 0; k < 20 && Math.abs(bao - b0) % 8 === 0; k++) bao = 1 + Math.floor(Math.random() * 999);
   const g = Xuan.stockGua(MKT_IDX, info, bao);
   MKT.casts[1] = { bao, g, s: mktScore(g) };
   renderCasts();
