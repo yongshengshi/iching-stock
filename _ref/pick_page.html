@@ -728,28 +728,65 @@ const mktRelTxt = rel => ({ yongshengti: '外力来助，吉', tikeyong: '费力
 const mktScore = g => Math.round(0.32 * g.subs.A + 0.30 * g.subs.B + 0.23 * g.subs.C + 0.15 * g.subs.D);
 const band = v => (v >= 66 ? 1 : v >= 52 ? 0 : -1);
 
-/* 取盘面数据（并发 10 批，避免串行过慢） */
+/* 取盘面数据：每批 40 只（URL 短，避免代理/插件拦长 URL）；腾讯失败则该批自动改走东财 */
+async function batchQt(list) {
+  const pre = list.map(c => (c[0] === '6' ? 'sh' : 'sz') + c).join(',');
+  const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 8000);
+  let r;
+  try { r = await fetch('https://qt.gtimg.cn/q=' + pre + '&_t=' + Date.now(), { cache: 'no-store', signal: ctl.signal }); }
+  finally { clearTimeout(timer); }
+  if (!r.ok) return null;
+  const txt = gbk.decode(await r.arrayBuffer());
+  const out = {};
+  for (const line of txt.split('\n')) {
+    const m = line.match(/v_([a-z]{2}\d{6})="([^"]*)"/);
+    if (!m || !m[2]) continue;
+    const p = m[2].split('~');
+    if (p.length < 46 || !+p[3]) continue;
+    out[m[1].slice(2)] = { chg: +p[32], amt: +p[37] };
+  }
+  return Object.keys(out).length ? out : null;
+}
+async function batchEm(list) {
+  const secids = list.map(c => (c[0] === '6' ? '1.' : '0.') + c).join(',');
+  const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 8000);
+  let r;
+  try { r = await fetch('https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&secids=' + secids +
+    '&fields=f2,f3,f6,f12&ut=fa5fd1943c7b386f172d6893dbfba10b&_t=' + Date.now(), { cache: 'no-store', signal: ctl.signal }); }
+  finally { clearTimeout(timer); }
+  if (!r.ok) return null;
+  const j = await r.json();
+  const diff = (j && j.data && j.data.diff) || [];
+  const out = {};
+  diff.forEach(d => {
+    if (!d || !d.f12) return;
+    if (typeof d.f3 !== 'number' || typeof d.f2 !== 'number') return;
+    out[d.f12] = { chg: d.f3, amt: (d.f6 || 0) / 1e4 };
+  });
+  return Object.keys(out).length ? out : null;
+}
 async function fetchBreadth(onProgress) {
+  /* 先探一处：确定哪家能通，避免全量跑完才发现都不通 */
+  let vendor = null;
+  try { if (await batchQt(['000001'])) vendor = 'qt'; } catch (e) {}
+  if (!vendor) { try { if (await batchEm(['000001'])) vendor = 'em'; } catch (e) {} }
+  if (!vendor) return null;                       // 两家都不通 → 立刻返回，由页面给诊断入口
+
   const codes = FR.map(r => r.code);
+  const SIZE = 40;
   const batches = [];
-  for (let i = 0; i < codes.length; i += 100) batches.push(codes.slice(i, i + 100));
+  for (let i = 0; i < codes.length; i += SIZE) batches.push(codes.slice(i, i + SIZE));
   const res = {};
-  let done = 0, idx = 0;
-  await Promise.all(Array.from({ length: 10 }, async () => {
+  let done = 0, idx = 0, cQt = 0, cEm = 0;
+  const other = vendor === 'qt' ? batchEm : batchQt;
+  await Promise.all(Array.from({ length: 8 }, async () => {
     while (idx < batches.length) {
       const list = batches[idx++];
-      const pre = list.map(c => (c[0] === '6' ? 'sh' : 'sz') + c).join(',');
-      try {
-        const r = await fetch('https://qt.gtimg.cn/q=' + pre + '&_t=' + Date.now(), { cache: 'no-store' });
-        const txt = gbk.decode(await r.arrayBuffer());
-        for (const line of txt.split('\n')) {
-          const m = line.match(/v_([a-z]{2}\d{6})="([^"]*)"/);
-          if (!m || !m[2]) continue;
-          const p = m[2].split('~');
-          if (p.length < 46 || !+p[3]) continue;
-          res[m[1].slice(2)] = { chg: +p[32], amt: +p[37] };
-        }
-      } catch (e) {}
+      let got = null;
+      try { got = vendor === 'qt' ? await batchQt(list) : await batchEm(list); } catch (e) {}
+      if (got) { if (vendor === 'qt') cQt++; else cEm++; }
+      else { try { const g2 = await other(list); if (g2) { got = g2; if (vendor === 'qt') cEm++; else cQt++; } } catch (e) {} }
+      if (got) Object.assign(res, got);
       done += list.length;
       if (onProgress) onProgress(Math.round(done / codes.length * 100));
     }
@@ -764,7 +801,8 @@ async function fetchBreadth(onProgress) {
     ld: arr.filter(x => x.chg <= -9.8).length,
     med: chgs[Math.floor(chgs.length / 2)],
     amt: arr.reduce((s, x) => s + x.amt, 0) / 1e4,
-    breadth: up / (up + dn || 1)
+    breadth: up / (up + dn || 1),
+    src: cEm ? (cQt ? `腾讯 ${cQt} + 东财 ${cEm}` : `东财 ${cEm} 批`) : `腾讯 ${cQt} 批`
   };
 }
 
@@ -775,7 +813,7 @@ function renderBreadth(d) {
       <div id="diag_mkt"></div>`;
     return;
   }
-  $('#breadthMeta').textContent = `扫描 ${d.n} 只主板 · 实时`;
+  $('#breadthMeta').textContent = `扫描 ${d.n} 只主板 · 实时 · ${d.src || ''}`;
   $('#breadth').innerHTML = `
     <div class="pts" style="grid-template-columns:repeat(4,1fr)">
       <div class="pt"><div class="l">上涨 / 下跌</div><div class="n"><span class="up">${d.up}</span> / <span class="down">${d.dn}</span></div></div>
