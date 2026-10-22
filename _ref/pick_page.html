@@ -539,7 +539,9 @@ async function doDeep(items, manual) {
       <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
         <input id="mp_${c.code}" placeholder="输入现价，如 5.64" style="max-width:180px">
         <button onclick="useManual('${c.code}')">用此价计算</button>
-      </div></div>`;
+        <button class="ghost" onclick="runDiag('${c.code}')">运行行情诊断</button>
+      </div>
+      <div id="diag_${c.code}"></div></div>`;
 
     const ud = quote.chg > 0 ? 'up' : quote.chg < 0 ? 'down' : '';
     const atr = xuan.pts.atr;
@@ -639,7 +641,87 @@ async function doDeep(items, manual) {
   }).join('');
 }
 
-/* ================= 大盘卜卦（报数起卦，手动触发） ================= */
+/* ================= 行情通道诊断 ================= */
+window.runDiag = async function (code) {
+  const box = document.getElementById('diag_' + code);
+  if (box) box.innerHTML = '<div class="muted">逐通道测试中…</div>';
+  const q = qPrefix(code) + code;
+  const rows = [];
+  const t = async (name, fn) => {
+    const t0 = Date.now();
+    try { const r = await fn(); rows.push([name, r ? '✅ 通' : '❌ 无数据', (Date.now() - t0) + 'ms']); }
+    catch (e) { rows.push([name, '❌ 失败', (e && e.message ? e.message : 'error') + ' · ' + (Date.now() - t0) + 'ms']); }
+  };
+  await t('① 腾讯 qt.gtimg.cn', async () => {
+    const r = await fetch('https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const txt = gbk.decode(await r.arrayBuffer());
+    const m = txt.match(/="([^"]+)"/);
+    return !!(m && m[1].split('~')[3] > 0);
+  });
+  await t('② 东财 push2', async () => {
+    const r = await fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=' + (code[0] === '6' ? '1.' : '0.') + code + '&fields=f43&ut=fa5fd1943c7b386f172d6893dbfba10b&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    return !!(j && j.data && j.data.f43);
+  });
+  await t('③ 腾讯备线 ifzq', async () => {
+    const r = await fetch('https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=' + q + '&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    const n = j && j.data && j.data[q];
+    return !!(n && n.qt && n.qt[q]);
+  });
+  await t('④ script 标签', async () => { const x = await scriptQuote(q); return !!x; });
+
+  const fail = rows.filter(r => r[1] !== '✅ 通').length;
+  const hint = fail === 0 ? '四个通道都通——若页面仍显示取不到，请强制刷新（Ctrl+Shift+R）'
+    : fail === 4 ? '<b>四通道全败</b>：绝大多数是浏览器插件（uBlock/AdGuard）或系统代理拦截。请在无痕窗口打开本页再试；无痕可用则是插件问题。'
+    : '<b>部分通道失败</b>：走「' + rows.find(r => r[1] === '✅ 通')[0] + '」即可取到价，页面已自动切换。';
+  if (box) box.innerHTML = `
+    <div class="tbl-wrap" style="margin-top:8px"><table style="min-width:auto"><thead><tr><th>通道</th><th>结果</th><th>耗时/原因</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="muted" style="font-family:Consolas,monospace;font-size:11.5px">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
+    <div class="note" style="margin-top:10px;font-size:12px">${hint}</div>
+    <div class="muted" style="font-size:11px;margin-top:8px">提示：如果结果里有 <b>ERR_BLOCKED_BY_CLIENT</b> / <b>Failed to fetch</b>，就是插件或代理拦的；如果是「HTTP 4xx/5xx」则是接口侧限流。</div>`;
+};
+
+window.runDiagMarket = async function () {
+  const box = document.getElementById('diag_mkt');
+  const fake = box ? box.id : null;
+  if (box) box.innerHTML = '<div class="muted">逐通道测试中…</div>';
+  const q = 'sz000001';
+  const rows = [];
+  const t = async (name, fn) => {
+    const t0 = Date.now();
+    try { const r = await fn(); rows.push([name, r ? '✅ 通' : '❌ 无数据', (Date.now() - t0) + 'ms']); }
+    catch (e) { rows.push([name, '❌ 失败', (e && e.message ? e.message : 'error') + ' · ' + (Date.now() - t0) + 'ms']); }
+  };
+  await t('① 腾讯 qt.gtimg.cn', async () => {
+    const r = await fetch('https://qt.gtimg.cn/q=' + q + '&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.arrayBuffer().then(b => /="[^"]+"$/.test(gbk.decode(b).trim()));
+  });
+  await t('② 东财 push2', async () => {
+    const r = await fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=0.000001&fields=f43&ut=fa5fd1943c7b386f172d6893dbfba10b&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json(); return !!(j && j.data && j.data.f43);
+  });
+  await t('③ 多股批量（100 只）', async () => {
+    const list = ['sz000001', 'sh600000', 'sz000002', 'sh600036', 'sz000651'].join(',');
+    const r = await fetch('https://qt.gtimg.cn/q=' + list + '&_t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.arrayBuffer().then(b => (gbk.decode(b).match(/v_[a-z]{2}\d{6}="/g) || []).length > 0);
+  });
+  const fail = rows.filter(r => r[1] !== '✅ 通').length;
+  const hint = fail === 0 ? '通道正常——请点「重新扫盘」再试一次'
+    : '<b>通道被拦</b>：请在无痕窗口打开本页对比（无痕正常=插件问题），或关闭系统代理后重试。';
+  if (box) box.innerHTML = `
+    <div class="tbl-wrap" style="margin-top:8px"><table style="min-width:auto"><thead><tr><th>通道</th><th>结果</th><th>耗时/原因</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="muted" style="font-family:Consolas,monospace;font-size:11.5px">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
+    <div class="note" style="margin-top:10px;font-size:12px">${hint}</div>`;
+};
+
+/* ================= 大盘卜卦（报数取数，手动触发） ================= */
 const MKT_IDX = '000000';   // 以「零」喻无形之大盘
 
 const mktRelTxt = rel => ({ yongshengti: '外力来助，吉', tikeyong: '费力可得，尚可', bihe: '体用比和，平稳', tishengyong: '耗气于外，乏力', yongketi: '受压于外，凶' }[rel] || '');
@@ -687,7 +769,12 @@ async function fetchBreadth(onProgress) {
 }
 
 function renderBreadth(d) {
-  if (!d) { $('#breadth').innerHTML = '<div class="note">行情取不到（可能被插件拦截），点「重新扫盘」再试。</div>'; return; }
+  if (!d) {
+    $('#breadth').innerHTML = `<div class="note">盘面数据取不到。可能是浏览器插件/代理拦截了 qt.gtimg.cn。<br>
+      <button class="ghost" style="margin-top:9px" onclick="runDiagMarket()">运行行情诊断</button></div>
+      <div id="diag_mkt"></div>`;
+    return;
+  }
   $('#breadthMeta').textContent = `扫描 ${d.n} 只主板 · 实时`;
   $('#breadth').innerHTML = `
     <div class="pts" style="grid-template-columns:repeat(4,1fr)">
