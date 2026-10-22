@@ -203,7 +203,7 @@ footer a{color:var(--ink3)}
     <div class="card hero" id="mktIdle">
       <div class="orn">☰ ☱ ☲ ☳</div>
       <div style="margin:14px 0 6px"><button class="btn-big" id="btnMktCast">卜 大 盘</button></div>
-      <div class="hint">以<b>当下时辰</b>起一卦，同时扫描全部主板涨跌<br>卦定基调，盘面做验证——两者相悖时以盘面为准</div>
+      <div class="hint"><b>报数起卦</b>：每次占随机报一数，与当下时辰合参，故每次结果不同<br>同时扫描全部主板涨跌——卦定基调，盘面做验证，相悖时以盘面为准</div>
     </div>
 
     <div id="mktResult" style="display:none">
@@ -215,19 +215,19 @@ footer a{color:var(--ink3)}
       <div class="card">
         <div class="step-h"><span class="no">贰</span><h2>盘面实况</h2><span class="tip" id="breadthMeta"></span></div>
         <div id="breadth"></div>
-        <div class="actions" style="margin-top:14px">
-          <button id="btnBreadth">重 新 扫 盘</button>
-          <button class="ghost" id="btnMktCast2">重 新 起 卦</button>
-          <button class="ghost" id="btnMkt">以报数再占</button>
-        </div>
-        <div class="muted" style="font-size:11px;text-align:center;margin-top:9px;line-height:1.7">
-          同一时辰内大盘卦不变（气运由时定），「重新起卦」只是重新取数；<br>想看这一问的变化，用「以报数再占」
-        </div>
       </div>
 
       <div class="card">
-        <div class="step-h"><span class="no">叁</span><h2>今日宜忌</h2><span class="tip" id="mktVerdictTip"></span></div>
+        <div class="step-h"><span class="no">叁</span><h2>再占对照</h2><span class="tip" id="mktVerdictTip"></span></div>
         <div id="mktVerdict"></div>
+        <div class="actions" style="margin-top:14px">
+          <button class="ghost" id="btnMkt">再 占 一 卦</button>
+          <button class="ghost" id="btnBreadth">重 新 扫 盘</button>
+          <button class="ghost" id="btnMktCast2">重 新 起 卦</button>
+        </div>
+        <div class="muted" style="font-size:11px;text-align:center;margin-top:9px;line-height:1.7">
+          报数起卦：每次占都随机报一数，与代码数、当下时辰合参，所以每次不同；报数会显示，便于复盘
+        </div>
       </div>
     </div>
 
@@ -1073,14 +1073,14 @@ async function doDeep(items, manual) {
   }).join('');
 }
 
-/* ================= 大盘卜卦（手动触发） ================= */
+/* ================= 大盘卜卦（报数起卦，手动触发） ================= */
 const MKT_IDX = '000000';   // 以「零」喻无形之大盘
 
-function mktRelTxt(rel) {
-  return { yongshengti: '外力来助，吉', tikeyong: '费力可得，尚可', bihe: '体用比和，平稳', tishengyong: '耗气于外，乏力', yongketi: '受压于外，凶' }[rel] || '';
-}
+const mktRelTxt = rel => ({ yongshengti: '外力来助，吉', tikeyong: '费力可得，尚可', bihe: '体用比和，平稳', tishengyong: '耗气于外，乏力', yongketi: '受压于外，凶' }[rel] || '');
+const mktScore = g => Math.round(0.32 * g.subs.A + 0.30 * g.subs.B + 0.23 * g.subs.C + 0.15 * g.subs.D);
+const band = v => (v >= 66 ? 1 : v >= 52 ? 0 : -1);
 
-/* 取盘面数据（不渲染） */
+/* 取盘面数据 */
 async function fetchBreadth(onProgress) {
   const codes = FR.map(r => r.code);
   const res = {};
@@ -1105,10 +1105,11 @@ async function fetchBreadth(onProgress) {
   const arr = Object.values(res);
   if (!arr.length) return null;
   const up = arr.filter(x => x.chg > 0).length, dn = arr.filter(x => x.chg < 0).length;
-  const lu = arr.filter(x => x.chg >= 9.8).length, ld = arr.filter(x => x.chg <= -9.8).length;
   const chgs = arr.map(x => x.chg).sort((a, b) => a - b);
   return {
-    n: arr.length, up, dn, lu, ld,
+    n: arr.length, up, dn,
+    lu: arr.filter(x => x.chg >= 9.8).length,
+    ld: arr.filter(x => x.chg <= -9.8).length,
     med: chgs[Math.floor(chgs.length / 2)],
     amt: arr.reduce((s, x) => s + x.amt, 0) / 1e4,
     breadth: up / (up + dn || 1)
@@ -1116,7 +1117,7 @@ async function fetchBreadth(onProgress) {
 }
 
 function renderBreadth(d) {
-  if (!d) { $('#breadth').innerHTML = '<div class="note">行情取不到（可能被插件拦截），稍后点「重新扫盘」再试。</div>'; return; }
+  if (!d) { $('#breadth').innerHTML = '<div class="note">行情取不到（可能被插件拦截），点「重新扫盘」再试。</div>'; return; }
   $('#breadthMeta').textContent = `扫描 ${d.n} 只主板 · 实时`;
   $('#breadth').innerHTML = `
     <div class="pts" style="grid-template-columns:repeat(4,1fr)">
@@ -1130,34 +1131,41 @@ function renderBreadth(d) {
     </div>`;
 }
 
-/* 卦象主体 */
-function renderMktGua(shi, sc, bd) {
-  const tier = sc >= 66 ? 1 : sc >= 52 ? 0 : -1;
+let MKT = { info: null, bd: null, casts: [] };
+
+/* 主卦渲染 */
+function renderMainCast() {
+  const c0 = MKT.casts[0];
+  if (!c0) return;
+  const { bao, g, s: sc } = c0;
+  const tier = band(sc);
   const tone = tier === 1 ? ['气数偏旺', '可进', 'v-in', 'b-in'] : tier === 0 ? ['气数中平', '宜守', 'v-wait', 'b-wait'] : ['气数偏弱', '宜退', 'v-out', 'b-out'];
-  const bad = Xuan.isBadGua(shi.gua);
+  const bad = Xuan.isBadGua(g.gua);
+  const bd = MKT.bd;
   const conflict = bd && bd.breadth < 0.45;
   let cap = tier === 1 ? '6 成' : tier === 0 ? '3 成' : '1 成';
   if (conflict) cap = '2 成（盘面压制）';
 
-  $('#mktMeta').innerHTML = `${Xuan.nowInfo(new Date()).yearGz}年 ${Xuan.nowInfo(new Date()).monthGz}月 ${Xuan.nowInfo(new Date()).dayGz}日 ${Xuan.nowInfo(new Date()).hourGz}时 · 时间起卦`;
+  const i = MKT.info;
+  $('#mktMeta').innerHTML = `报 <b style="color:var(--red)">${bao}</b> · ${i.yearGz}年 ${i.monthGz}月 ${i.dayGz}日 ${i.hourGz}时`;
   $('#mktGua').innerHTML = `
     <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
-      ${guaSvgHtml(shi, 64)}
+      ${guaSvgHtml(g, 64)}
       <div style="flex:1;min-width:200px">
-        <div class="big serif" style="font-size:24px">${shi.gua.label}</div>
-        <div class="muted" style="font-size:12.5px;margin-top:3px">${shi.yaoName}爻动 → ${shi.bian.label} ｜ 互 ${shi.hu.label}</div>
-        <div class="muted" style="font-size:12.5px;margin-top:2px">体${shi.ti.n}${shi.ti.wx} 用${shi.yong.n}${shi.yong.wx} · ${shi.relTxt.label}${bad ? ' · ⚠卦名不吉' : ''}</div>
+        <div class="big serif" style="font-size:24px">${g.gua.label}</div>
+        <div class="muted" style="font-size:12.5px;margin-top:3px">${g.yaoName}爻动 → ${g.bian.label} ｜ 互 ${g.hu.label}</div>
+        <div class="muted" style="font-size:12.5px;margin-top:2px">体${g.ti.n}${g.ti.wx} 用${g.yong.n}${g.yong.wx} · ${g.relTxt.label}${bad ? ' · ⚠卦名不吉' : ''}</div>
       </div>
       <div style="text-align:right">
         <div class="serif" style="font-size:34px;color:var(--red)">${sc}<span style="font-size:12px;color:var(--ink3)"> 分</span></div>
         <div class="muted" style="font-size:11.5px">${tone[0]}</div>
       </div>
     </div>
-    <div class="q" style="margin-top:14px;font-size:15px">卦辞：「${shi.gua.data.t}」</div>
-    <div class="q">爻辞：「${shi.yaoText}」</div>
+    <div class="q" style="margin-top:14px;font-size:15px">卦辞：「${g.gua.data.t}」</div>
+    <div class="q">爻辞：「${g.yaoText}」</div>
     <div class="verdict ${tone[2]}" style="margin-top:14px">
       <div class="vt"><span class="bg-badge ${tone[3]}">今日 ${tone[1]}</span>
-        <span class="muted" style="font-size:12px">${mktRelTxt(shi.rel)}</span></div>
+        <span class="muted" style="font-size:12px">${mktRelTxt(g.rel)}</span></div>
       <div class="reason" style="margin-top:8px">
         ${tier === 1 ? '大盘气数在吉位：可按个股卦位正常配仓，但<b>不追高</b>，回踩才买。'
           : tier === 0 ? '气数中平：只做结构，不做方向。轻仓、分批、破位就走。'
@@ -1168,7 +1176,6 @@ function renderMktGua(shi, sc, bd) {
       </div>
     </div>`;
 
-  /* 顶栏仓位同步 */
   const bar = $('#mktBar');
   if (bar) {
     const strong = bar.querySelector('b[data-cap]');
@@ -1176,34 +1183,32 @@ function renderMktGua(shi, sc, bd) {
   }
 }
 
-function renderMktVerdict(shi, sc, baoGua) {
-  const tier = sc >= 66 ? 1 : sc >= 52 ? 0 : -1;
-  $('#mktVerdictTip').textContent = baoGua ? '时辰定气运，报数看变数' : '时辰定气运；可再以报数占变数';
-  $('#mktVerdict').innerHTML = `
-    <div class="grid3">
-      <div class="pnl"><div class="t">主卦（时辰定）</div><div class="big">${shi.gua.label}</div>
-        <div class="q">「${shi.yaoText}」</div>
-        <div class="muted" style="font-size:11px;margin-top:4px">${sc} 分 · 一个时辰内不变，因为气运由时定</div></div>
-      <div class="pnl"><div class="t">变数（报数占）</div>
-        ${baoGua ? (() => {
-          const s2 = Math.round(0.32 * baoGua.subs.A + 0.30 * baoGua.subs.B + 0.23 * baoGua.subs.C + 0.15 * baoGua.subs.D);
-          const bad2 = Xuan.isBadGua(baoGua.gua);
-          const same = (s2 >= 66 && tier === 1) || (s2 >= 52 && s2 < 66 && tier === 0) || (s2 < 52 && tier === -1);
-          const jd = bad2 || s2 < 52 ? '变数偏弱（' + (bad2 ? '卦名不吉' : '分数低') + '）' : same ? '与主卦同向' : '与主卦相悖';
-          return `<div class="big">${baoGua.gua.label}<span style="font-size:13px;color:var(--ink3)"> ${s2} 分</span></div>
-            <div class="q">「${baoGua.yaoText}」</div>
-            <div class="muted" style="font-size:11px;margin-top:4px">${baoGua.yaoName}动 → ${baoGua.bian.label} ｜ 体${baoGua.ti.n}${baoGua.ti.wx} 用${baoGua.yong.n}${baoGua.yong.wx}</div>
-            <div class="note" style="margin-top:8px;font-size:11.5px">${jd}${(bad2 || s2 < 52) ? '——今日<b>再降一档</b>看待，宁可不做。' : same ? '——可顺势，但仓位仍守上限。' : '——两卦相悖，<b>减仓观望</b>，别加仓。'}</div>`;
-        })()
-          : `<div class="muted" style="font-size:12.5px">点「以报数再占」，看这一问的变数</div>`}</div>
-      <div class="pnl"><div class="t">怎么用</div>
-        <div class="muted" style="font-size:12px;line-height:1.85">主卦定今天基调（旺/平/弱）；变数卦看个中反复——两卦同向则顺势，相悖则减仓观望。盘面扫描用来验证卦象：卦吉而盘面普跌，以盘面为准。</div></div>
-    </div>`;
+/* 再占对照 */
+function renderCasts() {
+  const c0 = MKT.casts[0], c1 = MKT.casts[1];
+  $('#mktVerdictTip').textContent = c1 ? '初占与再占对照' : '可再占一卦做对照';
+  const one = (c, label) => c ? `
+    <div class="pnl"><div class="t">${label}（报 ${c.bao}）</div>
+      <div class="big">${c.g.gua.label}<span style="font-size:13px;color:var(--ink3)"> ${c.s} 分</span></div>
+      <div class="q">「${c.g.yaoText}」</div>
+      <div class="muted" style="font-size:11px;margin-top:4px">${c.g.yaoName}动 → ${c.g.bian.label} ｜ 体${c.g.ti.n}${c.g.ti.wx} 用${c.g.yong.n}${c.g.yong.wx}</div>
+    </div>` : `<div class="pnl"><div class="t">${label}</div><div class="muted" style="font-size:12.5px">点「再占一卦」，看这一问的反复</div></div>`;
+
+  let judge = `<div class="muted" style="font-size:12px;line-height:1.85">${c1 ? '' : '卜卦讲究「初筮告，再筮以验」——再报一数另起一卦，与初占对照看是否同心。'}</div>`;
+  if (c1) {
+    const g1 = band(c0.s), g2 = band(c1.s);
+    const b1 = Xuan.isBadGua(c0.g.gua), b2 = Xuan.isBadGua(c1.g.gua);
+    let txt, cls;
+    if (b2 || g2 < 0) { txt = '<b>再占偏弱</b>——今日再降一档看待，宁可不做。'; cls = 'var(--green)'; }
+    else if (g1 * g2 < 0) { txt = '<b>两卦相悖</b>——减仓观望，别加仓。'; cls = 'var(--gold)'; }
+    else { txt = '<b>两卦同向</b>——可顺势，但仓位仍守上限。'; cls = 'var(--red)'; }
+    judge = `<div class="note" style="font-size:12.5px;line-height:1.85">对照：${g1 * g2 < 0 ? '一吉一弱' : (g1 === 1 && g2 === 1 ? '两次皆吉' : g1 === -1 && g2 === -1 ? '两次皆弱' : '两次皆平')}　<span style="color:${cls}">${txt}</span></div>`;
+  }
+  $('#mktVerdict').innerHTML = `<div class="grid3">${one(c0, '初占')}${one(c1, '再占')}<div class="pnl"><div class="t">怎么看</div>${judge}
+    <div class="muted" style="font-size:11.5px;margin-top:8px">大盘卦定基调，盘面做验证；两者相悖时以盘面为准。</div></div></div>`;
 }
 
-let MKT = { shi: null, sc: 0, bd: null, bao: null };
-
-/* 主入口：用户点「卜大盘」才起卦 —— 先取数，再起卦，再渲染 */
+/* 主入口：点「卜大盘」→ 取数 → 报数起卦 */
 async function castMarket(ev) {
   const btn = (ev && ev.currentTarget) || $('#btnMktCast') || $('#btnMktCast2');
   const old = btn ? btn.textContent : '';
@@ -1214,16 +1219,29 @@ async function castMarket(ev) {
   $('#breadth').innerHTML = '<div class="muted">正在扫描全部主板…</div>';
 
   const bd = await fetchBreadth(pct => { if (btn) btn.textContent = '取数中 ' + pct + '%'; });
-  const now = new Date();
-  const shi = Xuan.timeGua(Xuan.nowInfo(now));
-  const sc = Math.round(Math.max(1, Math.min(100, shi.base)));
 
-  MKT = { shi, sc, bd, bao: null };
-  if (btn) { btn.disabled = false; btn.textContent = old || '重 新 起 卦'; }
+  const info = Xuan.nowInfo(new Date());
+  const bao = 1 + Math.floor(Math.random() * 999);
+  const g = Xuan.stockGua(MKT_IDX, info, bao);
+
+  MKT = { info, bd, casts: [{ bao, g, s: mktScore(g) }] };
+  if (btn) { btn.disabled = false; btn.textContent = old || '卜 大 盘'; }
 
   renderBreadth(bd);
-  renderMktGua(shi, sc, bd);
-  renderMktVerdict(shi, sc, null);
+  renderMainCast();
+  renderCasts();
+}
+
+/* 再占：另报一数 */
+function againCast() {
+  if (!MKT.casts.length) return;
+  const info = Xuan.nowInfo(new Date());
+  const b0 = MKT.casts[0].bao;
+  let bao = 1 + Math.floor(Math.random() * 999);
+  for (let k = 0; k < 10 && Math.abs(bao - b0) % 24 === 0; k++) bao = 1 + Math.floor(Math.random() * 999);
+  const g = Xuan.stockGua(MKT_IDX, info, bao);
+  MKT.casts[1] = { bao, g, s: mktScore(g) };
+  renderCasts();
 }
 
 async function reScan() {
@@ -1233,21 +1251,13 @@ async function reScan() {
   btn.disabled = false; btn.textContent = '重 新 扫 盘';
   MKT.bd = bd;
   renderBreadth(bd);
-  if (MKT.shi) renderMktGua(MKT.shi, MKT.sc, bd);
-}
-
-function recastMkt() {
-  if (!MKT.shi) return;
-  const info = Xuan.nowInfo(new Date());
-  const bao = 1 + Math.floor(Math.random() * 999);
-  MKT.bao = { bao, g: Xuan.stockGua(MKT_IDX, info, bao) };
-  renderMktVerdict(MKT.shi, MKT.sc, MKT.bao.g);
+  if (MKT.casts.length) renderMainCast();
 }
 
 $('#btnMktCast').onclick = castMarket;
 $('#btnMktCast2').onclick = castMarket;
+$('#btnMkt').onclick = againCast;
 $('#btnBreadth').onclick = reScan;
-$('#btnMkt').onclick = recastMkt;
 
 /* ================= 搜索 ================= */
 const norm = v => String(v || '').replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[\s·]/g, '').toLowerCase();
