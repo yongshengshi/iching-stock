@@ -141,6 +141,25 @@ button.ghost:hover{background:var(--panel2);color:var(--ink)}
 footer{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:26px;line-height:2}
 footer a{color:var(--ink3)}
 .up{color:var(--red)}.down{color:var(--green)}
+/* 摇签动画 */
+.cast-ov{position:fixed;inset:0;z-index:95;display:none;place-items:center;
+  background:radial-gradient(620px 460px at 50% 44%,rgba(38,29,18,.88),rgba(22,16,10,.95));
+  opacity:0;transition:opacity .35s ease}
+.cast-ov.on{display:grid;opacity:1}
+.cast-ov.fade{opacity:0}
+.cast-stage{width:min(72vw,320px);text-align:center}
+.cast-svg{width:100%;height:auto;display:block}
+.cast-cap{margin-top:10px;font-family:"Songti SC","SimSun",serif;letter-spacing:4px;color:#e9ddc0;font-size:14px;opacity:.9}
+.tube-g{transform-origin:160px 310px}
+.cast-shake .tube-g{animation:tubeShake .42s ease-in-out infinite}
+@keyframes tubeShake{0%,100%{transform:rotate(0)}18%{transform:rotate(-7deg) translateX(-4px)}42%{transform:rotate(6deg) translateX(4px)}66%{transform:rotate(-5deg)}88%{transform:rotate(4deg) translateX(2px)}}
+.stk{transform-box:fill-box;transform-origin:50% 100%}
+.cast-shake .stk{animation:stkJig .36s ease-in-out infinite}
+@keyframes stkJig{0%,100%{transform:rotate(var(--r,0deg)) translateY(0)}50%{transform:rotate(calc(var(--r,0deg) + 5deg)) translateY(-5px)}}
+.rise-wrap .rstick{opacity:0}
+.cast-rise .rstick{opacity:1;animation:riseUp .95s cubic-bezier(.18,.7,.24,1) forwards}
+@keyframes riseUp{0%{transform:translateY(150px)}72%{transform:translateY(-92px)}100%{transform:translateY(-84px)}}
+.cast-rise .sticks-g{opacity:.35;transition:opacity .4s}
 </style>
 </head>
 <body>
@@ -473,12 +492,17 @@ function switchTab(name) {
 
 async function doPick() {
   const btn = $('#btnPick');
-  btn.disabled = true; btn.textContent = '起 卦 中…';
-  await new Promise(r => setTimeout(r, 50));
+  btn.disabled = true;
+  FX.show();
+  const shake = FX.playShake(1400);
   const bao = 1 + Math.floor(Math.random() * 999);
   const { list, info, start, poolSize } = pickThree(bao);
+  await shake;
+  if (!list.length) { FX.hide(); btn.disabled = false; btn.textContent = '卜 卦 选 股'; alert('本时辰没有满足条件的标的，请稍后再试'); return; }
+
+  /* 三支签依次升起，写上三只卦名 */
+  await FX.rise(list.map(p => p.z.gua.label));
   btn.disabled = false; btn.textContent = '卜 卦 选 股';
-  if (!list.length) { alert('本时辰没有满足条件的标的，请稍后再试'); return; }
 
   picks = list.map(p => ({ ...p, bao }));
   $('#pickMeta').innerHTML = `报 <b style="color:var(--red)">${bao}</b> → 从吉卦榜第 <b>${start + 1}</b> 位起取（池内 ${poolSize} 只）· ${info.dayGz}日 ${info.hourGz}时`;
@@ -495,6 +519,7 @@ async function doPick() {
       <button class="mini" data-i="${i}">诊断这只 →</button>
     </div>`).join('');
   $('#cands').querySelectorAll('.mini').forEach(b2 => b2.onclick = () => diagOne(+b2.dataset.i));
+  FX.hide();
   $('#pickResult').style.display = 'block';
   $('#pickResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -514,6 +539,10 @@ async function doDeep(items, manual) {
   $('#out').style.display = 'block';
   $('#out').innerHTML = `<div class="muted" style="margin-top:14px">取价、查公告、复占中…</div>`;
 
+  /* 摇签动画先行（与取数并行） */
+  FX.show();
+  const shake = FX.playShake(1400);
+
   const out = [];
   for (const c of items) {
     let quote = await getQuote(c.code);
@@ -529,6 +558,9 @@ async function doDeep(items, manual) {
     const res = (xuan && re) ? judge({ ...c, S: xuan.S, grade: xuan.grade.t, z: xuan.zhu }, tech, news, re) : null;
     out.push({ c, quote, news, xuan, tech, re, res });
   }
+
+  await shake;
+  await FX.rise(out.filter(o => o.xuan).map(o => o.xuan.zhu.gua.label));
 
   const head = `<div class="muted" style="font-size:11.5px;margin:16px 0 12px">初卦报 <b>${bao}</b> · 复占另报一数 · ${info.dayGz}日 ${info.hourGz}时</div>`;
 
@@ -639,6 +671,7 @@ async function doDeep(items, manual) {
       </div>
     </div>`;
   }).join('');
+  FX.hide();
 }
 
 /* ================= 行情通道诊断 ================= */
@@ -720,6 +753,89 @@ window.runDiagMarket = async function () {
     <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="muted" style="font-family:Consolas,monospace;font-size:11.5px">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
     <div class="note" style="margin-top:10px;font-size:12px">${hint}</div>`;
 };
+
+/* ================= 摇签动画 FX ================= */
+const FX = (() => {
+  let ov, stage, capEl, skipped = false;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function ensure() {
+    if (ov) return;
+    ov = document.createElement('div');
+    ov.className = 'cast-ov';
+    ov.innerHTML = '<div><div class="cast-stage" id="fxStage"></div><div class="cast-cap" id="fxCap">摇签中…</div></div>';
+    document.body.appendChild(ov);
+    stage = ov.querySelector('#fxStage');
+    capEl = ov.querySelector('#fxCap');
+    ov.addEventListener('click', () => { skipped = true; });
+  }
+
+  function svgMarkup(shaking, names) {
+    const tilts = [-9, -5, 7, 3, -3, 6, -6, 4];
+    let sticks = '';
+    tilts.forEach((r, i) => {
+      const x = 112 + i * 13 + ((i * 7) % 6);
+      sticks += `<rect class="stk" style="--r:${r}deg" x="${x}" y="${64 + ((i * 7) % 11)}" width="7.5" height="98" rx="3.6" fill="#dcc289" stroke="#a9834a" stroke-width=".8"/>`;
+    });
+    let rise = '';
+    if (names && names.length) {
+      const n = Math.min(3, names.length), startX = 160 - (n - 1) * 17;
+      names.slice(0, 3).forEach((nm, i) => {
+        const x = startX + i * 34 - 8;
+        let txt = '';
+        [...nm].forEach((ch, j) => { txt += `<text x="${x + 8}" y="${118 + j * 21}" text-anchor="middle" font-size="15" font-weight="600" fill="#4a3418" font-family='"Songti SC","SimSun",serif'>${ch}</text>`; });
+        rise += `<g class="rstick" style="animation-delay:${i * 0.22}s">
+          <rect x="${x}" y="${28}" width="16" height="212" rx="7" fill="#e9d49b" stroke="#a9834a" stroke-width="1"/>
+          <rect x="${x}" y="${28}" width="16" height="24" rx="6" fill="#b3341f"/>
+          ${txt}
+        </g>`;
+      });
+    }
+    return `<svg class="cast-svg" viewBox="0 0 320 360">
+      <ellipse cx="160" cy="332" rx="92" ry="13" fill="rgba(0,0,0,.38)"/>
+      <g class="rise-wrap">${rise}</g>
+      <g class="tube-g ${shaking ? 'cast-shake' : ''}">
+        <g class="sticks-g">${sticks}</g>
+        <path d="M104 150 Q160 136 216 150 L226 296 Q160 322 94 296 Z" fill="#8a5a2b"/>
+        <path d="M104 150 Q160 136 216 150 L219 188 Q160 206 101 188 Z" fill="#9c6a35"/>
+        <ellipse cx="160" cy="150" rx="56" ry="11" fill="#5e3d1c"/>
+        <ellipse cx="160" cy="150" rx="44" ry="7.5" fill="#3c2712"/>
+        <rect x="136" y="196" width="48" height="58" rx="6" fill="#b3341f" opacity=".92"/>
+        <text x="160" y="234" text-anchor="middle" font-size="26" fill="#f3e6c8" font-family='"Songti SC","SimSun",serif'>签</text>
+      </g>
+    </svg>`;
+  }
+
+  function show() {
+    ensure(); skipped = false;
+    ov.classList.remove('fade');
+    ov.classList.add('on');
+    capEl.textContent = '摇签中…';
+    stage.innerHTML = svgMarkup(true, null);
+  }
+
+  async function playShake(ms) {
+    await wait(ms || 1400);
+    return skipped;
+  }
+
+  async function rise(names) {
+    skipped = false;
+    stage.innerHTML = svgMarkup(false, names || []);
+    stage.firstElementChild.classList.add('cast-rise');
+    capEl.textContent = names && names.length ? '签出' : '摇签中…';
+    /* 签在屏上停留：升签动画 + 交错延迟 + 停顿 */
+    const hold = 950 + (names ? Math.min(3, names.length) * 220 : 0) + 420;
+    await wait(skipped ? 200 : hold);
+  }
+
+  function hide() {
+    ov.classList.add('fade');
+    setTimeout(() => { ov.classList.remove('on', 'fade'); stage.innerHTML = ''; }, 380);
+  }
+
+  return { show, playShake, rise, hide };
+})();
 
 /* ================= 大盘卜卦（报数取数，手动触发） ================= */
 const MKT_IDX = '000000';   // 以「零」喻无形之大盘
@@ -910,10 +1026,16 @@ async function castMarket(ev) {
   if (btn) { btn.disabled = true; btn.textContent = '取数中 0%'; }
   $('#mktIdle').style.display = 'none';
   $('#mktResult').style.display = 'block';
-  $('#mktGua').innerHTML = '<div class="muted">正在扫描全部主板…</div>';
-  $('#breadth').innerHTML = '<div class="muted">正在扫描全部主板…</div>';
+  $('#mktGua').innerHTML = '<div class="muted">正在摇签与扫描全部主板…</div>';
+  $('#breadth').innerHTML = '<div class="muted">…</div>';
 
-  const bd = await fetchBreadth(pct => { if (btn) btn.textContent = '取数中 ' + pct + '%'; });
+  /* 摇签动画与取数并行：动画铺满等待时间 */
+  FX.show();
+  const shake = FX.playShake(1400);
+  const [bd] = await Promise.all([
+    fetchBreadth(pct => { if (btn) btn.textContent = '取数中 ' + pct + '%'; }),
+    shake
+  ]);
 
   const info = Xuan.nowInfo(new Date());
   const bao = 1 + Math.floor(Math.random() * 999);
@@ -922,9 +1044,13 @@ async function castMarket(ev) {
   MKT = { info, bd, casts: [{ bao, g, s: mktScore(g) }] };
   if (btn) { btn.disabled = false; btn.textContent = old || '卜 大 盘'; }
 
+  /* 签出：签筒里升起写有卦名的竹签 */
+  await FX.rise([g.gua.label]);
+
   renderBreadth(bd);
   renderMainCast();
   renderCasts();
+  FX.hide();
 }
 
 /* 再占：另报一数 */
