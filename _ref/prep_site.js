@@ -19,6 +19,10 @@ const xuLast = xu.lastIndexOf('</body>');
 xu = xu.slice(0, xuLast) + xuScript + xu.slice(xuLast + 7);
 fs.writeFileSync(path.join(out, 'xuanxue.html'), xu);
 
+/* 2.4 决策台账 */
+const led = fs.readFileSync(path.join(src, '台账.html'), 'utf8');
+fs.writeFileSync(path.join(out, '台账.html'), led);
+
 /* 2.5 清理旧的诊断页 */
 const oldDiag = path.join(out, 'diag.html');
 if (fs.existsSync(oldDiag)) fs.unlinkSync(oldDiag);
