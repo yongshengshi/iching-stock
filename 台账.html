@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>决策台账 · 卦象 × 建议 × 实际 × 复盘</title>
+<meta name="description" content="记录每一次卦象、建议、实际操作与结果验证的决策台账。">
+<style>
+:root{--paper:#f7f2e7;--panel:#fffdf7;--panel2:#fbf6ea;--ink:#241f1a;--ink2:#5f5749;--ink3:#8b8172;
+  --line:#e3d8c2;--red:#b3341f;--green:#1a7a5c;--gold:#a9812f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(1200px 600px at 10% -10%,#fffdf6,rgba(255,253,246,0) 60%),radial-gradient(900px 500px at 100% 0%,#f3ead8,rgba(243,234,216,0) 55%),var(--paper);
+  min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 20px 80px}
+h1,h2,.serif{font-family:"Songti SC","SimSun","Noto Serif SC",serif}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:4px 0 16px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.logo{width:52px;height:52px;border-radius:14px;background:var(--red);display:grid;place-items:center}
+.h-main{flex:1;min-width:180px}
+h1{font-size:25px;letter-spacing:4px;font-weight:600}
+.h-sub{font-size:12px;color:var(--ink3);letter-spacing:2px;margin-top:5px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 10px 30px -18px rgba(90,70,40,.45)}
+.card .t{font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:9px;font-weight:600}
+.big{font-family:"Songti SC",serif;font-size:19px;letter-spacing:1px}
+.kv{display:grid;grid-template-columns:86px 1fr;gap:5px 10px;font-size:12.5px;margin-top:6px}
+.kv .k{color:var(--ink3)}
+.num{font-variant-numeric:tabular-nums;font-family:Consolas,monospace}
+.sec-h{display:flex;align-items:baseline;gap:9px;margin:22px 0 11px 2px}
+.sec-h .no{width:22px;height:22px;border-radius:4px;background:var(--red);color:#fff;font-size:12px;display:grid;place-items:center;font-family:"Songti SC",serif}
+.sec-h h2{font-size:17px;letter-spacing:3px}
+.sec-h .tip{font-size:12px;color:var(--ink3)}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:820px}
+th{text-align:left;font-weight:500;font-size:11px;color:var(--ink3);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid #f0e9da;vertical-align:top;line-height:1.6}
+tbody tr:hover{background:#fdf8ec}
+.date{font-family:Consolas,monospace;font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.gua{font-family:"Songti SC",serif;font-size:13px}
+.gua small{display:block;color:var(--ink3);font-size:10.5px;font-family:Consolas,monospace;margin-top:2px}
+.badge{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid;white-space:nowrap}
+.b-ok{color:var(--green);background:rgba(26,122,92,.07);border-color:rgba(26,122,92,.3)}
+.b-miss{color:#fff;background:var(--red);border-color:var(--red)}
+.b-run{color:#8a6a1f;background:rgba(169,129,47,.1);border-color:rgba(169,129,47,.4)}
+.note{background:rgba(179,52,31,.045);border:1px solid rgba(179,52,31,.18);border-radius:10px;padding:12px 15px;font-size:12px;line-height:1.85;color:#7a3125;margin-top:14px}
+.pending li{margin:6px 0 6px 18px;font-size:13px;line-height:1.7}
+footer{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:1px;margin-top:26px;line-height:2}
+.up{color:var(--red)}.down{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><svg viewBox="0 0 100 100" width="28" height="28"><rect x="20" y="30" width="12" height="50" rx="4" fill="#fff"/><rect x="40" y="22" width="12" height="58" rx="4" fill="#fff" opacity=".7"/><rect x="60" y="34" width="12" height="46" rx="4" fill="#fff" opacity=".5"/></svg></div>
+    <div class="h-main"><h1>决策台账</h1><div class="h-sub">卦象 × 建议 × 实际 × 复盘 ｜ 2026-10-22 起</div></div>
+  </header>
+
+  <div class="cards">
+    <div class="card"><div class="t">持仓档案</div><div id="posCard"></div></div>
+    <div class="card"><div class="t">资金与盈亏</div><div id="sumCard"></div></div>
+  </div>
+
+  <div class="sec-h"><span class="no">壹</span><h2>决策台账</h2><span class="tip">时间正序 · 每条含结果验证</span></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>日期</th><th>类型 / 标的</th><th>卦象</th><th>建议</th><th>实际</th><th>结果验证</th><th>状态</th></tr></thead>
+    <tbody id="ledgerBody"></tbody>
+  </table></div>
+
+  <div class="sec-h"><span class="no">贰</span><h2>待复盘事项</h2><span class="tip">到期逐条验证</span></div>
+  <div class="card"><ul class="pending" id="pendingList"></ul></div>
+
+  <div class="note">
+    <b>台账规则：</b>每条记录含「卦象 / 建议 / 实际 / 结果验证」四要素，<b>结果验证以收盘数据为准，不做事后修饰</b>；标注 ❌ miss 的记录同样保留——模型的失灵记录与正确记录同等重要。
+    卦象与因子均无当日预测力（详见项目 README 回测章节），本台账验证的是<b>纪律与流程</b>，不是预测准确率。
+  </div>
+
+  <footer>决策台账 · 梅花易数选股项目<br><span style="opacity:.7">台账不说谎，人才会说谎</span></footer>
+</div>
+
+<script>
+const L = {
+  "positions": [
+    {
+      "code": "600900",
+      "name": "长江电力",
+      "shares": 200,
+      "cost": 29.705,
+      "buyDate": "2026-10-27",
+      "thesis": "低波红利底仓，持有 6 个月以上（至 2027-04 底）",
+      "stopRule": "28.50 下方减半",
+      "takeRule": "33 以上部分止盈",
+      "checkpoints": ["2026-11 初：三季度发电量公告", "每月初：分红与 20 日涨幅复查"],
+      "status": "持有中",
+      "result": "待复盘"
+    }
+  ],
+  "summary": {
+    "realizedPnl": -1320,
+    "realizedNote": "美盈森 2000 股清仓：卖出 4.74 − 成本 5.40 = −0.66/股",
+    "cash": 3539,
+    "startCapital": "美盈森 2000 股（成本 5.40，市值约 10,800）",
+    "asOf": "2026-10-27"
+  },
+  "entries": [
+    {
+      "date": "2026-10-22",
+      "type": "个股卦",
+      "subject": "美盈森 002303",
+      "gua": "（早期版本，完整卦象未存档）",
+      "score": null,
+      "advice": "观望，不追不补（参考价 5.26）",
+      "actual": "未操作",
+      "outcome": "次日 −2.86%、两日后 −9.13%，观望判断 ✅",
+      "status": "已验证"
+    },
+    {
+      "date": "2026-10-23",
+      "type": "大盘卦 + 个股",
+      "subject": "大盘 / 美盈森",
+      "gua": "艮为山 六五 → 风山渐（报 505）",
+      "score": 47,
+      "advice": "空仓不出手；美盈森等反弹减、不补仓",
+      "actual": "未操作",
+      "outcome": "当日美盈森 −9.13% 至 4.68，大盘涨跌比 6.1%，跌停 59 只——判断 ✅",
+      "status": "已验证"
+    },
+    {
+      "date": "2026-10-26",
+      "type": "大盘卦 + 个股",
+      "subject": "大盘 / 美盈森",
+      "gua": "天雷无妄 上九 → 泽雷随（报 951）",
+      "score": 40,
+      "advice": "卦曰勿动；美盈森四票 +2 可入场但降级为轻仓试 ≤2 成（买一 4.69），未时执行",
+      "actual": "未操作（等放量确认）",
+      "outcome": "当日美盈森 −2.86% 至 4.76，大盘缩量企稳（成交 1924 亿）——未出手 ✅",
+      "status": "已验证"
+    },
+    {
+      "date": "2026-10-27 早",
+      "type": "大盘卦 + 个股",
+      "subject": "大盘 / 美盈森",
+      "gua": "火山旅 九三 → 火地晋（报 133）52 分；美盈森 山水蒙 → 风雷益（报 800）四票 +2",
+      "score": 52,
+      "advice": "大盘中平可轻装；美盈森可入场：巳时挂 4.77，止损 4.43，仓位 2.5 成",
+      "actual": "未成交（价未回踩至 4.77）",
+      "outcome": "当日美盈森 −6.13% 收 4.59——短线 miss ❌，再次印证卦与因子无当日预测力",
+      "status": "miss"
+    },
+    {
+      "date": "2026-10-27 午",
+      "type": "换仓决策卦",
+      "subject": "卖美盈森 → 换长江电力（6 个月+）",
+      "gua": "坤为地 六四 → 雷地豫（报 216）58 分；再占 兑为泽 九二 → 泽雷随（报 350）75 分，时令旺",
+      "score": 58,
+      "advice": "坤六四「括囊」备好，兑九二「孚兑，吉，悔亡」——换仓方向对，分两步走不一把梭：未时卖美盈森 @4.82；长电挂 29.42 等回踩",
+      "actual": "美盈森破日内低点后改挂 4.73，实际成交 @4.74 × 2000 股；长电 29.42 单未成交",
+      "outcome": "当日美盈森收 4.59——卖出避损 300 元 ✅；执行纪律（破低点立即卖）当天生效",
+      "status": "已验证"
+    },
+    {
+      "date": "2026-10-27 午后",
+      "type": "买入执行",
+      "subject": "长江电力 600900 建仓",
+      "gua": "（未时中段补卦）山风蛊 六五 → 巽为风 62 分「干父之蛊，用誉」＋ 雷水解 上六「射隼于高墉之上，获之，无不利」（报 769 / 300）",
+      "score": 62,
+      "advice": "卦象支持果断出手：先挂 29.42 → 午后未回踩，14:30 检查点触发后上移 → 最终 14:38 建议直接 29.72 吃卖单",
+      "actual": "14:40 前后成交 200 股 @29.68（成本 29.705 含 5 元最低佣金）",
+      "outcome": "当日收盘 29.83，浮盈 +25 元 ✅；建仓完成，进入 6 个月持有期",
+      "status": "进行中"
+    }
+  ],
+  "pending": [
+    "长江电力 6 个月持有结果（2027-04 底结算）：股息 + 价格涨跌",
+    "长电止损纪律检验：28.50 下方减半是否触发",
+    "美盈森后续走势追踪：模型判其「排雷对象」，若继续走弱则排雷逻辑加分",
+    "大盘 10-23 暴跌后的修复节奏：成交额能否持续站回 3000 亿以上",
+    "「可入场」信号对短线失灵的问题：考虑在页面标注『可入场=6日窗口相对机会，非当日必涨』"
+  ]
+}
+;
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const fmt = (v,d=2) => (+v).toFixed(d);
+const sign = v => (v>0?'+':'')+fmt(v);
+
+/* 持仓卡 */
+document.getElementById('posCard').innerHTML = L.positions.map(p=>`
+  <div class="big">${esc(p.name)} ${p.code}</div>
+  <div class="kv">
+    <div class="k">持仓</div><div class="num">${p.shares} 股</div>
+    <div class="k">成本</div><div class="num">¥${fmt(p.cost,3)}</div>
+    <div class="k">买入日</div><div>${p.buyDate}</div>
+    <div class="k">逻辑</div><div>${esc(p.thesis)}</div>
+    <div class="k">止损</div><div>${esc(p.stopRule)}</div>
+    <div class="k">止盈</div><div>${esc(p.takeRule)}</div>
+    <div class="k">检查点</div><div>${p.checkpoints.map(esc).join('<br>')}</div>
+    <div class="k">状态</div><div>${esc(p.status)} ｜ 复盘：${esc(p.result)}</div>
+  </div>`).join('');
+
+/* 汇总卡 */
+const sm = L.summary;
+document.getElementById('sumCard').innerHTML = `
+  <div class="big">实现盈亏 <span style="color:${sm.realizedPnl>0?'var(--red)':'var(--green)'}">${sign(sm.realizedPnl)}</span> 元</div>
+  <div class="kv">
+    <div class="k">构成</div><div>${esc(sm.realizedNote)}</div>
+    <div class="k">剩余现金</div><div class="num">¥${fmt(sm.cash)}</div>
+    <div class="k">期初</div><div>${esc(sm.startCapital)}</div>
+    <div class="k">截至</div><div>${sm.asOf}</div>
+  </div>`;
+
+/* 台账表 */
+const stBadge = st => st==='已验证' ? '<span class="badge b-ok">✅ 已验证</span>'
+  : st==='miss' ? '<span class="badge b-miss">❌ miss</span>'
+  : '<span class="badge b-run">⏳ 进行中</span>';
+document.getElementById('ledgerBody').innerHTML = L.entries.map(e=>`
+  <tr>
+    <td class="date">${e.date}</td>
+    <td>${esc(e.type)}<br><small class="muted" style="color:var(--ink3);font-size:11px">${esc(e.subject)}</small></td>
+    <td class="gua">${esc(e.gua)}${e.score!=null?`<small>卦气 ${e.score} 分</small>`:''}</td>
+    <td>${esc(e.advice)}</td>
+    <td>${esc(e.actual)}</td>
+    <td>${e.outcome}</td>
+    <td>${stBadge(e.status)}</td>
+  </tr>`).join('');
+
+/* 待复盘 */
+document.getElementById('pendingList').innerHTML = L.pending.map(x=>`<li>${esc(x)}</li>`).join('');
+</script>
+</body>
+</html>
