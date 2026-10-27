@@ -21,7 +21,7 @@ fs.writeFileSync(path.join(out, 'xuanxue.html'), xu);
 
 /* 2.4 决策台账 */
 const ledPage = fs.readFileSync(path.join(src, '台账.html'), 'utf8');
-fs.writeFileSync(path.join(out, '台账.html'), ledPage);
+fs.writeFileSync(path.join(out, 'ledger.html'), ledPage);   // ASCII 文件名：中文文件名线上 403
 
 /* 2.5 清理旧的诊断页 */
 const oldDiag = path.join(out, 'diag.html');
