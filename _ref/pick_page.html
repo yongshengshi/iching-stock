@@ -256,6 +256,7 @@ footer a{color:var(--ink3)}
     数据：腾讯行情（实时价）· 东方财富公告 · 本地日K因子<br>
     <a href="xuanxue.html" id="oldLink">玄学全量选股（旧版）</a> ·
     <a href="台账.html" id="ledgerLink">决策台账</a> ·
+    <a href="台账.html" id="ledgerLink">决策台账</a> ·
     <span style="opacity:.7">卦定象，时不待人</span>
   </footer>
 </div>
@@ -1152,6 +1153,8 @@ $('#btnOne').onclick = () => {
   renderMkt();
   const a = document.getElementById('oldLink');
   if (a && location.search) a.href += location.search;
+  const lg = document.getElementById('ledgerLink');
+  if (lg && location.search) lg.href += location.search;
   const lg = document.getElementById('ledgerLink');
   if (lg && location.search) lg.href += location.search;
 })();
